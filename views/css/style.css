@@ -1,0 +1,335 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap');
+
+
+:root {
+    --border-gray-color: rgb(184, 184, 184);
+    /* color pallete */
+    --color1: rgb(232, 249, 253);
+    --color1-hover: rgb(209, 220, 223);
+    --color1-active: rgb(179, 189, 192);
+    --color2: rgb(121, 218, 232);
+    --color3: rgb(10, 161, 221);
+    --color3-hover: rgb(7, 140, 192);
+    --color3-active: rgb(6, 102, 139);
+    --color4: rgb(33, 85, 205);
+}
+
+body {
+    background: #F8F9FB;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.deviceScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 50%;
+    aspect-ratio: 16 / 9;
+    background: gray;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.leftElements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100%;
+    /* background: rgb(36, 36, 36); */
+    background: white;
+    border: 1px solid var(--border-gray-color);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 15px 15px 0;
+    overflow: hidden;
+}
+
+.leftElements > div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: height 0.2s ease-in-out;
+}
+
+.leftElements > div.collaped {
+    height: 47px;
+    overflow: hidden;
+}
+
+.leftElements .container.collaped {
+    display: none;
+}
+
+.leftElements > div .top {
+    /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
+    /* border-top   : 1px solid var(--border-gray-color); */
+    border-bottom: 1px solid var(--border-gray-color);
+    font-size: 20px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    user-select: none;
+}
+
+.leftElements > div .top i {
+    rotate: 90deg;
+    transition: rotate 0.2s ease-in-out;
+}
+
+.leftElements > div .top.closed i {
+    rotate: 0deg;
+}
+
+.leftElements > div .container {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    /* min-height: 50px; */
+    flex-grow: 1;
+    border-bottom: 1px solid var(--border-gray-color);
+}
+
+.leftElements button {
+    background: transparent;
+    border: none;
+    color: black;
+    font-size: 20px;
+    padding: 15px;
+}
+
+.leftElements button:hover {
+    background: rgb(209, 209, 209);
+}
+
+.leftElements .separator {
+    width: 100%;
+    height: 5px;
+    background: white;
+}
+
+/* .leftElements .separator:hover {
+    cursor: n-resize;
+} */
+
+.rightElements {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%;
+    height: 100%;
+    /* background: rgb(36, 36, 36); */
+    background: white;
+    border: 1px solid rgb(184, 184, 184);
+    display: flex;
+    flex-direction: column;
+    color: black;
+    padding: 15px;
+}
+
+.topInfo {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.topInfo > div {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.topInfo span {
+    font-size: 20px;
+}
+
+.rightElements {
+    border-radius: 15px 0 0 15px;
+    overflow: hidden;
+}
+
+.rightElements .content {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.rightElements .content .group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.rightElements .content .header {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.rightElements .section {
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rightElements .section input {
+    height: 30px;
+    padding: 4px 11px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    outline: none;
+}
+
+.rightElements .nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    position: relative;
+}
+
+.rightElements .nav button {
+    width: 50%;
+    height: 40px;
+    background: transparent;
+    color: black;
+    border: none;
+    background: rgb(231, 231, 231);
+    padding: 0;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+}
+
+.rightElements .nav button.active {
+    background: transparent;
+}
+
+.rightElements .nav .underline {
+    position: absolute;
+    left: calc(var(--active-index) * 50%);
+    bottom: 0;
+    width: 50%;
+    height: 2px;
+    background: red;
+    transition: left 0.2s ease-in-out;
+}
+
+.topInfo button {
+    width: 25px;
+    height: 25px;
+}
+
+.deviceScreen > .clicked, .deviceScreen.clicked {
+    outline: 1px red dashed;
+}
+
+.mainZone {
+    position: relative;
+    height: 100%;
+}
+
+.topZone {
+    /* background: red;  */
+    height: 70px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.topZone div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+
+.topZone button {
+    height: 40px;
+    width: 80px;
+    border-radius: .25rem;
+    border: none;
+    border: 1px solid gray;
+    font-size: 16px;
+    background: var(--color1);
+    color: black;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+}
+
+.topZone button:hover {
+    background: var(--color1-hover);
+    cursor: pointer;
+}
+
+.topZone button:active {
+    background: var(--color1-active);
+}
+
+.topZone .current {
+    border: none;
+    color: white;
+    background: var(--color3);
+}
+
+.topZone .current:hover {
+    background: var(--color3-hover);
+}
+
+.topZone .current:active {
+    background: var(--color3-active);
+}
+
+.topZone img {
+    height: 100%;
+}
+
+.topZone .projectTitle {
+    gap: 1px;
+}
+
+.topZone .projectTitle h1 {
+    margin-block: 0px;
+}
+
+.topZone .projectTitle img {
+    height: 2em;
+    border-radius: .25rem;
+}
+
+.rightActions {
+    
+}
+
+.rightActions button {
+    width: 40px;
+}
+
+.rightActions .accountButton {
+    border-radius: 100%;
+    height: 40px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+    cursor: pointer;
+}
