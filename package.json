@@ -23,6 +23,7 @@
     },
     "homepage": "https://github.com/randrei12/app-builder-web#readme",
     "dependencies": {
+        "blockly": "^9.0.1",
         "concurrently": "^7.5.0",
         "dotenv": "^16.0.3",
         "ejs": "^3.1.8",

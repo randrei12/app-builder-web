@@ -22,10 +22,25 @@ body {
     font-family: 'Roboto', sans-serif;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 * {
     box-sizing: border-box;
+}
+
+.component {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    width: 100vw;
+    height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+}
+
+.component:not(.active) {
+    display: none;
 }
 
 .deviceScreen {
@@ -332,4 +347,9 @@ body {
     height: 40px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
     cursor: pointer;
+}
+
+#blockly {
+    height: 100%;
+    width: 100%;
 }

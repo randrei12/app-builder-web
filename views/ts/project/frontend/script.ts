@@ -212,20 +212,6 @@ window.onclick = e => {
     screenElements.forEach(elem => elem.unfocus());
     const target = screenElements.filter(elem => elem.getHtml() === path[0])[0];
     target.focus();
-    // console.log({screen: screenElements[0].isFocused, btn: screenElements[1].isFocused});
 }
 
 addEventListener('removeDroppedElement', (e: CustomEvent) => screenElements.splice(screenElements.indexOf(e.detail), 1));
-
-// declare global {
-//     interface Window { screenElements: any; }
-// }
-
-// window.screenElements = screenElements;
-
-
-
-// document.querySelectorAll('.leftElements > div').forEach((e, i) => e.setAttribute('style', `background: ${['blue', 'orange'][i]}`))
-
-
-if (screen.width < 830) document.body.innerText = 'Studio cannot work properly on this device. Please use a PC'

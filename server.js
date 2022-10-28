@@ -12,8 +12,16 @@ app.use('/js', express.static('views/js'));
 // app.use(express.static('views'));
 // app.use(express.static('views'));
 
-app.get('/', (req, res) => {
+app.get('/project', (req, res) => {
+    res.redirect('/project/design');
+})
+
+app.get('/project/:type', (req, res) => {
     res.render('project');
+})
+
+app.get('/', (req, res) => {
+    res.redirect('/project')
 });
 
 app.listen(process.env.PORT, () => {
