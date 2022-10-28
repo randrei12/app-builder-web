@@ -17,6 +17,7 @@ app.get('/project', (req, res) => {
 })
 
 app.get('/project/:type', (req, res) => {
+    if (!['design', 'blocks'].includes(req.params.type)) return res.redirect('/project/design');
     res.render('project');
 })
 
