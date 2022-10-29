@@ -43,8 +43,14 @@ xml.innerHTML = `
                 <field name="NUM">5</field>
             </shadow>
         </value>
-
     </block>
+    <block type="set_interval" colour="#29b33b">
+    <value name="TIME">
+        <shadow type="math_number">
+            <field name="NUM">5</field>
+        </shadow>
+    </value>
+</block>
 </category>
 <category name="Logic" colour="200">
     <block type="logic_compare"><field name="OP">EQ</field></block>

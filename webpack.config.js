@@ -1,6 +1,18 @@
 const path = require('path');
+// const fs = require('fs');
 
-module.exports = {
+// function getAllFiles(location) {
+//     let dirData = fs.readdirSync(location);
+//     let obj = {};
+//     dirData.forEach(file => {
+//         let currentPath = path.join(location, file);
+//         if (fs.lstatSync(currentPath).isDirectory()) return Object.assign(obj, getAllFiles(currentPath)); 
+//         obj[file.substring(0, file.lastIndexOf('.'))] = currentPath;
+//     });
+//     return obj;
+// }
+
+module.exports = [{
     entry: './views/ts/project/script.ts',
     mode: 'development',
     module: {
@@ -19,4 +31,4 @@ module.exports = {
         filename: 'project.js',
         path: path.resolve(__dirname, 'views', 'js'),
     },
-};
+}];

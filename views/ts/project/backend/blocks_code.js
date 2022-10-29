@@ -12,3 +12,8 @@ exports.set_timeout = block => {
     return seconds ? `setTimeout(() => ${code}, ${seconds * 1000})` : generateError('"AFTER X SECONDS DO" value is invalid');
 }
 
+exports.set_interval = block => {
+    const seconds = javascriptGenerator.valueToCode(block, "TIME", javascriptGenerator.ORDER_NONE);
+    let code = javascriptGenerator.statementToCode(block, 'CODE');
+    return seconds ? `setInterval(() => ${code}, ${seconds * 1000})` : generateError('"EACH X SECONDS DO" value is invalid');
+}

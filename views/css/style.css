@@ -81,12 +81,12 @@ body {
     transition: height 0.2s ease-in-out;
 }
 
-.leftElements > div.collaped {
+.leftElements > div.collapsed {
     height: 47px;
     overflow: hidden;
 }
 
-.leftElements .container.collaped {
+.leftElements .container.collapsed {
     display: none;
 }
 

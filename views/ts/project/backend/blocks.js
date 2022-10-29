@@ -51,3 +51,31 @@ exports.set_timeout = {
         });
     }
 }
+
+exports.set_interval = {
+    init: function () {
+        this.jsonInit({
+            "type": "set_interval",
+            "message0": "each %1 seconds do %2 %3",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "TIME",
+                    "check": "Number"
+                },
+                {
+                    "type": "input_dummy"
+                },
+                {
+                    "type": "input_statement",
+                    "name": "CODE"
+                }
+            ],
+            "previousStatement": null,
+            "nextStatement": null,
+            "colour": `${colors[0]}`,
+            "tooltip": "",
+            "helpUrl": ""
+        });
+    }
+}

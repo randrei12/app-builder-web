@@ -5,7 +5,7 @@ const tops: NodeListOf<HTMLElement> = document.querySelectorAll('.leftElements .
 tops.forEach((top, index) => {
     top.onclick = () => {
         top.classList.toggle('closed');
-        containers[index].classList.toggle('collaped');  
-        sides[index].classList.toggle('collaped');
+        containers[index].classList.toggle('collapsed');  
+        sides[index].classList.toggle('collapsed');
     }
 });
