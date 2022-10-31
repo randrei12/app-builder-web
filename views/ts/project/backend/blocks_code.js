@@ -43,3 +43,5 @@ exports.open_url = block => {
     var dropdown_type = block.getFieldValue('TYPE');
     return `window.open(${value_url}, '_${dropdown_type}')`;
 }
+
+exports.newline = block => '\n'

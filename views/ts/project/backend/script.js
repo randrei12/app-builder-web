@@ -19,12 +19,10 @@ addEventListener('elementsChange', e => {
         let category = document.createElement('category');
         category.setAttribute('name', element.id);
         category.setAttribute('colour', '#A8A8A8');
-        copy_xml.appendChild(category)
-        // copy_xml.innerHTML += `<category name="${element.id}" colour="#A8A8A8"></category>`;
+        copy_xml.appendChild(category);
     })
     console.log(xml, copy_xml);
     workspace.updateToolbox(copy_xml);
-    // console.log(e.detail)
 });
 
 

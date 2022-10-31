@@ -1,15 +1,12 @@
 const Blockly = require('blockly');
 
-const colors = ['#29b33b'];
+const colors = ['#29b33b', '', '', '', '', '', '', ''];
 
 class NewToolbox extends Blockly.ToolboxCategory {
-/** @override */
-addColourBorder_(color){
-//     console.log(colour);
-    this.rowDiv_.setAttribute('style', `--color: ${color}`);
-
-//     // this.rowDiv_.style.backgroundColor = colour;
-  }
+    /** @override */
+    addColourBorder_(color) {
+        this.rowDiv_.setAttribute('style', `--color: ${color}`);
+    }
 }
 
 Blockly.registry.register(Blockly.registry.Type.TOOLBOX_ITEM, Blockly.ToolboxCategory.registrationName, NewToolbox, true)
@@ -175,14 +172,14 @@ exports.open_url = {
                     "type": "field_dropdown",
                     "name": "TYPE",
                     "options": [
-                      [
-                        "new",
-                        "blank"
-                      ],
-                      [
-                        "current",
-                        "self"
-                      ]
+                        [
+                            "new",
+                            "blank"
+                        ],
+                        [
+                            "current",
+                            "self"
+                        ]
                     ]
                 }
             ],
@@ -190,6 +187,19 @@ exports.open_url = {
             "previousStatement": null,
             "nextStatement": null,
             "colour": `${colors[0]}`,
+            "tooltip": "",
+            "helpUrl": ""
+        });
+    }
+}
+
+exports.newline = {
+    init: function () {
+        this.jsonInit({
+            "type": "newline",
+            "message0": "newline",
+            "output": null,
+            "colour": `${colors[3]}`,
             "tooltip": "",
             "helpUrl": ""
         });

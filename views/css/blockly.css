@@ -27,7 +27,8 @@
     left: 0;
     top: 0;
     height: 100%;
-    width: 12px;
+    width: 17px;
+    border-radius: 7px;
     background: var(--color);
     transition: width 0.2s ease-in-out;
 }
