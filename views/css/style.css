@@ -40,7 +40,8 @@ body {
 }
 
 .component:not(.active) {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .deviceScreen {

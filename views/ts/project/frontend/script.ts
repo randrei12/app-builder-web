@@ -181,7 +181,7 @@ class DroppedElement {
     }
 }
 
-const deviceScreen = new DroppedElement({ type: 'screen', id: 'root', prebuild: document.querySelector('.deviceScreen') });
+const deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
 deviceScreen.focus();
 screenElements.push(deviceScreen);
 
@@ -194,6 +194,7 @@ buttons.forEach(button => {
         });
         elem.generateElement(deviceScreen.getHtml());
         screenElements.push(elem);
+        dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
         deviceScreen.children.add(elem);
         elem.parent = deviceScreen;
         screenElements.forEach(elem => elem.unfocus());
@@ -214,4 +215,7 @@ window.onclick = e => {
     target.focus();
 }
 
-addEventListener('removeDroppedElement', (e: CustomEvent) => screenElements.splice(screenElements.indexOf(e.detail), 1));
+addEventListener('removeDroppedElement', (e: CustomEvent) => {
+    screenElements.splice(screenElements.indexOf(e.detail), 1);
+    dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
+});
