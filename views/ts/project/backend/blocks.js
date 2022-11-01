@@ -1,6 +1,6 @@
 const Blockly = require('blockly');
 
-const colors = ['#29b33b', '#00C7FF', '#12159f', '', '', '', '', ''];
+const colors = ['#29b33b', '#00C7FF', '#12159f', '#ac8304', '#FFA100', '#56aeff', '#deb569'];
 
 class NewToolbox extends Blockly.ToolboxCategory {
     /** @override */
@@ -11,12 +11,16 @@ class NewToolbox extends Blockly.ToolboxCategory {
 
 Blockly.registry.register(Blockly.registry.Type.TOOLBOX_ITEM, Blockly.ToolboxCategory.registrationName, NewToolbox, true)
 
-let theme = Blockly.Theme.defineTheme('themeName', {
+let theme = Blockly.Theme.defineTheme('default', {
     base: Blockly.Themes.Classic,
 });
 theme.blockStyles.loop_blocks.colourPrimary = colors[0];
 theme.blockStyles.logic_blocks.colourPrimary = colors[1];
 theme.blockStyles.math_blocks.colourPrimary = colors[2];
+theme.blockStyles.text_blocks.colourPrimary = colors[3];
+theme.blockStyles.list_blocks.colourPrimary = colors[4];
+theme.blockStyles.variable_blocks.colourPrimary = colors[5];
+theme.blockStyles.procedure_blocks.colourPrimary = colors[6];
 window.theme = theme;
 // window.color = theme.blockStyles;
 
@@ -233,6 +237,41 @@ exports.controls_if = {
             'suppressPrefixSuffix': true,
             'mutator': 'controls_if_mutator',
             'extensions': ['controls_if_tooltip'],
+        });
+    }
+}
+
+exports.math_on_list = {
+    init: function () {
+        this.jsonInit({
+            'type': 'math_on_list',
+            'message0': '%1 %2',
+            'args0': [
+                {
+                    'type': 'field_dropdown',
+                    'name': 'OP',
+                    'options': [
+                        ['%{BKY_MATH_ONLIST_OPERATOR_SUM}', 'SUM'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_MIN}', 'MIN'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_MAX}', 'MAX'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_AVERAGE}', 'AVERAGE'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_MEDIAN}', 'MEDIAN'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_MODE}', 'MODE'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_STD_DEV}', 'STD_DEV'],
+                        ['%{BKY_MATH_ONLIST_OPERATOR_RANDOM}', 'RANDOM'],
+                    ],
+                },
+                {
+                    'type': 'input_value',
+                    'name': 'LIST',
+                    'check': 'Array',
+                },
+            ],
+            'output': 'Number',
+            'colour': `${colors[4]}`,
+            'helpUrl': '%{BKY_MATH_ONLIST_HELPURL}',
+            'mutator': 'math_modes_of_list_mutator',
+            'extensions': ['math_op_tooltip'],
         });
     }
 }

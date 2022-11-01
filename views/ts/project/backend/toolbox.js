@@ -182,7 +182,7 @@ xml.innerHTML = `
     <block type="math_number_property"></block>
     <block type="math_random_int"></block>
 </category>
-<category name="Text" colour="20">
+<category name="Text" colour="#ac8304">
     <block type="text"></block>
     <!-- <block type="text_multiline"></block> -->
     <block type="text_join">
@@ -551,7 +551,7 @@ xml.innerHTML = `
     <block type="lists_isEmpty"></block>
 </category>
 <category name="Variables" custom="VARIABLE" colour="#56aeff"></category>
-<category name="Functions" colour="#995ba5" custom="PROCEDURE"></category>
+<category name="Functions" colour="#deb569" custom="PROCEDURE"></category>
 <sep></sep>
 `;
 
