@@ -550,6 +550,81 @@ xml.innerHTML = `
     </block>
     <block type="lists_isEmpty"></block>
 </category>
+<category name="Color" colour="#AD006A">
+    <block type="colour_picker">
+        <field name="COLOUR">#000000</field>
+    </block>
+    <block type="colour_picker">
+        <field name="COLOUR">#ffffff</field>
+    </block>
+    <block type="colour_picker">
+        <field name="COLOUR">#ff0000</field>
+    </block>
+    <block type="colour_picker">
+        <field name="COLOUR">#ffd800</field>
+    </block>
+    <block type="colour_picker">
+        <field name="COLOUR">#0094ff</field>
+    </block>
+    <block type="colour_picker">
+        <field name="COLOUR">#267f00</field>
+    </block>
+    <block type="colour_picker">
+        <field name="COLOUR">#ff6a00</field>
+    </block>
+    <block type="colour_random"></block>
+    <block type="colour_rgb">
+        <value name="RED">
+            <shadow type="math_number">
+                <field name="NUM">0</field>
+            </shadow>
+        </value>
+        <value name="GREEN">
+            <shadow type="math_number">
+                <field name="NUM">147</field>
+            </shadow>
+        </value>
+        <value name="BLUE">
+            <shadow type="math_number">
+                <field name="NUM">58</field>
+            </shadow>
+        </value>
+    </block>
+    <block type="colour_hsv">
+        <value name="HUE">
+            <shadow type="math_number">
+                <field name="NUM">143</field>
+            </shadow>
+        </value>
+        <value name="SATURATION">
+            <shadow type="math_number">
+                <field name="NUM">100</field>
+            </shadow>
+        </value>
+        <value name="VALUE">
+            <shadow type="math_number">
+                <field name="NUM">57</field>
+            </shadow>
+        </value>
+    </block>
+    <block type="colour_blend">
+        <value name="COLOUR1">
+            <shadow type="colour_picker">
+                <field name="COLOUR">#ff0000</field>
+            </shadow>
+        </value>
+        <value name="COLOUR2">
+            <shadow type="colour_picker">
+                <field name="COLOUR">#3333ff</field>
+            </shadow>
+        </value>
+        <value name="RATIO">
+            <shadow type="math_number">
+                <field name="NUM">0.5</field>
+            </shadow>
+        </value>
+    </block>
+</category>
 <category name="Variables" custom="VARIABLE" colour="#56aeff"></category>
 <category name="Functions" colour="#deb569" custom="PROCEDURE"></category>
 <sep></sep>

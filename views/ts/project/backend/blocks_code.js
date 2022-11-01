@@ -44,4 +44,52 @@ exports.open_url = block => {
     return `window.open(${value_url}, '_${dropdown_type}')`;
 }
 
-exports.newline = block => '\n'
+exports.newline = block => '\n';
+
+exports.colour_hsv = block => {
+    const hue = javascriptGenerator.valueToCode(block, 'HUE', javascriptGenerator.ORDER_NONE) || 0;
+    const saturation = javascriptGenerator.valueToCode(block, 'SATURATION', javascriptGenerator.ORDER_NONE) || 0;
+    const value = javascriptGenerator.valueToCode(block, 'VALUE', javascriptGenerator.ORDER_NONE) || 0;
+    const functionName = javascriptGenerator.provideFunction_('colourHsv', `
+  function ${javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_}(h, s, v) {
+    h /= 60;
+	s /= 100;
+	v /= 100;
+	const hi = Math.floor(h) % 6;
+
+	const f = h - Math.floor(h);
+	const p = 255 * v * (1 - s);
+	const q = 255 * v * (1 - (s * f));
+	const t = 255 * v * (1 - (s * (1 - f)));
+	v *= 255;
+
+
+    let r, g, b;
+
+	switch (hi) {
+		case 0:
+			r = v, g = t, b = p;
+		case 1:
+			r = q, g = v, b = p;
+		case 2:
+			r = p, g = v, b = t;
+		case 3:
+			r = p, g = q, b = v;
+		case 4:
+			r = t, g = p, b = v;
+		case 5:
+			r = v, g = p, b = q;
+	}
+
+    r = Math.max(Math.min(Number(r), 100), 0) * 2.55;
+    g = Math.max(Math.min(Number(g), 100), 0) * 2.55;
+    b = Math.max(Math.min(Number(b), 100), 0) * 2.55;
+    r = ('0' + (Math.round(r) || 0).toString(16)).slice(-2);
+    g = ('0' + (Math.round(g) || 0).toString(16)).slice(-2);
+    b = ('0' + (Math.round(b) || 0).toString(16)).slice(-2);
+    return '#' + r + g + b;
+  }
+  `);
+    const code = functionName + '(' + hue + ', ' + saturation + ', ' + value + ')';
+    return code;
+}

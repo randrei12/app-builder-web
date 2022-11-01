@@ -1,6 +1,6 @@
 const Blockly = require('blockly');
 
-const colors = ['#29b33b', '#00C7FF', '#12159f', '#ac8304', '#FFA100', '#56aeff', '#deb569'];
+const colors = ['#29b33b', '#00C7FF', '#12159f', '#ac8304', '#FFA100', '#56aeff', '#deb569', '#AD006A'];
 
 class NewToolbox extends Blockly.ToolboxCategory {
     /** @override */
@@ -21,8 +21,9 @@ theme.blockStyles.text_blocks.colourPrimary = colors[3];
 theme.blockStyles.list_blocks.colourPrimary = colors[4];
 theme.blockStyles.variable_blocks.colourPrimary = colors[5];
 theme.blockStyles.procedure_blocks.colourPrimary = colors[6];
-window.theme = theme;
-// window.color = theme.blockStyles;
+theme.blockStyles.colour_blocks.colourPrimary = colors[7];
+// window.theme = theme;
+window.color = theme.blockStyles;
 
 exports.theme = theme;
 exports.go_to = {
@@ -273,5 +274,71 @@ exports.math_on_list = {
             'mutator': 'math_modes_of_list_mutator',
             'extensions': ['math_op_tooltip'],
         });
+    }
+}
+
+exports.colour_rgb = {
+    init: function () {
+        this.jsonInit({
+            'type': 'colour_rgb',
+            'message0': 'color with %{BKY_COLOUR_RGB_RED} %1 %{BKY_COLOUR_RGB_GREEN} %2 %{BKY_COLOUR_RGB_BLUE} %3',
+            'args0': [
+                {
+                    'type': 'input_value',
+                    'name': 'RED',
+                    'check': 'Number',
+                    'align': 'RIGHT',
+                },
+                {
+                    'type': 'input_value',
+                    'name': 'GREEN',
+                    'check': 'Number',
+                    'align': 'RIGHT',
+                },
+                {
+                    'type': 'input_value',
+                    'name': 'BLUE',
+                    'check': 'Number',
+                    'align': 'RIGHT',
+                },
+            ],
+            'output': 'Colour',
+            'helpUrl': '%{BKY_COLOUR_RGB_HELPURL}',
+            'style': 'colour_blocks',
+            'tooltip': '%{BKY_COLOUR_RGB_TOOLTIP}',
+        })
+    }
+}
+
+exports.colour_hsv = {
+    init: function () {
+        this.jsonInit({
+            'type': 'colour_hsv',
+            'message0': 'color with hue %1 saturation %2 value %3',
+            'args0': [
+                {
+                    'type': 'input_value',
+                    'name': 'HUE',
+                    'check': 'Number',
+                    'align': 'RIGHT',
+                },
+                {
+                    'type': 'input_value',
+                    'name': 'SATURATION',
+                    'check': 'Number',
+                    'align': 'RIGHT',
+                },
+                {
+                    'type': 'input_value',
+                    'name': 'VALUE',
+                    'check': 'Number',
+                    'align': 'RIGHT',
+                },
+            ],
+            'output': 'Colour',
+            'helpUrl': '%{BKY_COLOUR_RGB_HELPURL}',
+            'style': 'colour_blocks',
+            'tooltip': '%{BKY_COLOUR_RGB_TOOLTIP}',
+        })
     }
 }
