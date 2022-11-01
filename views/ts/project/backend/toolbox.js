@@ -107,7 +107,7 @@ xml.innerHTML = `
     <block type="logic_boolean"><field name="BOOL">FALSE</field></block>
     <block type="logic_negate"></block>
 </category>
-<category name="Math" colour="230">
+<category name="Math" colour="#12159f">
     <block type="math_number"></block>
     <block type="math_constant"></block>
     <block type="math_arithmetic">

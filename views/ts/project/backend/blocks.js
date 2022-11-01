@@ -1,6 +1,6 @@
 const Blockly = require('blockly');
 
-const colors = ['#29b33b', '', '', '', '', '', '', ''];
+const colors = ['#29b33b', '#00C7FF', '#12159f', '', '', '', '', ''];
 
 class NewToolbox extends Blockly.ToolboxCategory {
     /** @override */
@@ -11,15 +11,16 @@ class NewToolbox extends Blockly.ToolboxCategory {
 
 Blockly.registry.register(Blockly.registry.Type.TOOLBOX_ITEM, Blockly.ToolboxCategory.registrationName, NewToolbox, true)
 
-// let theme = Blockly.Theme.defineTheme('themeName', {
-//     base: Blockly.Themes.Classic,
-// });
-// theme.blockStyles.list_blocks.colourPrimary = '#FF00DC';
-// theme.blockStyles.logic_blocks.colourPrimary = '#FF00DC';
-// window.theme = theme;
+let theme = Blockly.Theme.defineTheme('themeName', {
+    base: Blockly.Themes.Classic,
+});
+theme.blockStyles.loop_blocks.colourPrimary = colors[0];
+theme.blockStyles.logic_blocks.colourPrimary = colors[1];
+theme.blockStyles.math_blocks.colourPrimary = colors[2];
+window.theme = theme;
 // window.color = theme.blockStyles;
 
-// exports.theme = theme;
+exports.theme = theme;
 exports.go_to = {
     init: function () {
         this.jsonInit({
@@ -202,6 +203,36 @@ exports.newline = {
             "colour": `${colors[3]}`,
             "tooltip": "",
             "helpUrl": ""
+        });
+    }
+}
+
+exports.controls_if = {
+    init: function () {
+        this.jsonInit({
+            'type': 'controls_if',
+            'message0': '%{BKY_CONTROLS_IF_MSG_IF} %1',
+            'args0': [
+                {
+                    'type': 'input_value',
+                    'name': 'IF0',
+                    'check': 'Boolean',
+                },
+            ],
+            'message1': '%{BKY_CONTROLS_IF_MSG_THEN} %1',
+            'args1': [
+                {
+                    'type': 'input_statement',
+                    'name': 'DO0',
+                },
+            ],
+            'colour': `${colors[0]}`,
+            'previousStatement': null,
+            'nextStatement': null,
+            'helpUrl': '%{BKY_CONTROLS_IF_HELPURL}',
+            'suppressPrefixSuffix': true,
+            'mutator': 'controls_if_mutator',
+            'extensions': ['controls_if_tooltip'],
         });
     }
 }
