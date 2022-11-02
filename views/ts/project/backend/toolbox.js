@@ -188,7 +188,7 @@ xml.innerHTML = `
     <block type="text_join">
         <value name="ADD0">
             <block type="text">
-                <field name="TEXT">Hello,</field>
+                <field name="TEXT">Hello </field>
             </block>
         </value>
         <value name="ADD1">
@@ -590,23 +590,6 @@ xml.innerHTML = `
             </shadow>
         </value>
     </block>
-    <block type="colour_hsv">
-        <value name="HUE">
-            <shadow type="math_number">
-                <field name="NUM">143</field>
-            </shadow>
-        </value>
-        <value name="SATURATION">
-            <shadow type="math_number">
-                <field name="NUM">100</field>
-            </shadow>
-        </value>
-        <value name="VALUE">
-            <shadow type="math_number">
-                <field name="NUM">57</field>
-            </shadow>
-        </value>
-    </block>
     <block type="colour_blend">
         <value name="COLOUR1">
             <shadow type="colour_picker">
@@ -627,6 +610,20 @@ xml.innerHTML = `
 </category>
 <category name="Variables" custom="VARIABLE" colour="#56aeff"></category>
 <category name="Functions" colour="#deb569" custom="PROCEDURE"></category>
+<category name="Native" colour="#adb212">
+    <block type="current_time">
+        
+    </block>
+</category>
+<category name="test blocks" colour="#ffffff">
+    <block type="text_print">
+        <value name="TEXT">
+            <shadow type="text">
+                <field name="TEXT">abc</field>
+            </shadow>
+        </value>
+    </block>
+</category>
 <sep></sep>
 `;
 

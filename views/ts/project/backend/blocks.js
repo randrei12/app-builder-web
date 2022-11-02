@@ -1,6 +1,6 @@
 const Blockly = require('blockly');
 
-const colors = ['#29b33b', '#00C7FF', '#12159f', '#ac8304', '#FFA100', '#56aeff', '#deb569', '#AD006A'];
+const colors = ['#29b33b', '#00C7FF', '#12159f', '#ac8304', '#FFA100', '#56aeff', '#deb569', '#AD006A', '#ADB212'];
 
 class NewToolbox extends Blockly.ToolboxCategory {
     /** @override */
@@ -310,35 +310,56 @@ exports.colour_rgb = {
     }
 }
 
-exports.colour_hsv = {
+exports.current_time = {
     init: function () {
         this.jsonInit({
-            'type': 'colour_hsv',
-            'message0': 'color with hue %1 saturation %2 value %3',
-            'args0': [
+            "type": "from_current_time_get",
+            "message0": "from current time get %1",
+            "args0": [
                 {
-                    'type': 'input_value',
-                    'name': 'HUE',
-                    'check': 'Number',
-                    'align': 'RIGHT',
-                },
-                {
-                    'type': 'input_value',
-                    'name': 'SATURATION',
-                    'check': 'Number',
-                    'align': 'RIGHT',
-                },
-                {
-                    'type': 'input_value',
-                    'name': 'VALUE',
-                    'check': 'Number',
-                    'align': 'RIGHT',
-                },
+                    "type": "field_dropdown",
+                    "name": "OPTION",
+                    "options": [
+                        [
+                            "year",
+                            "YEAR"
+                        ],
+                        [
+                            "month",
+                            "MONTH"
+                        ],
+                        [
+                            "day of the month",
+                            "DAYM"
+                        ],
+                        [
+                            "day of the week",
+                            "DAYW"
+                        ],
+                        [
+                            "hour",
+                            "HOUR"
+                        ],
+                        [
+                            "minute",
+                            "MINUTE"
+                        ],
+                        [
+                            "second",
+                            "SECOND"
+                        ],
+                        [
+                            "millisecond",
+                            "MILLISECOND"
+                        ]
+                    ]
+                }
             ],
-            'output': 'Colour',
-            'helpUrl': '%{BKY_COLOUR_RGB_HELPURL}',
-            'style': 'colour_blocks',
-            'tooltip': '%{BKY_COLOUR_RGB_TOOLTIP}',
-        })
+            "inputsInline": false,
+            "output": null,
+            "colour": 230,
+            "tooltip": "",
+            "helpUrl": ""
+        });
     }
 }
