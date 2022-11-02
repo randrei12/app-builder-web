@@ -612,7 +612,20 @@ xml.innerHTML = `
 <category name="Functions" colour="#deb569" custom="PROCEDURE"></category>
 <category name="Native" colour="#adb212">
     <block type="current_time">
-        
+        <field name="OPTION">HOUR</field>
+    </block>
+    <block type="current_time">
+        <field name="OPTION">MINUTE</field>
+    </block>
+    <block type="current_time">
+        <field name="OPTION">SECOND</field>
+    </block>
+    <block type="seconds_since_1970"></block>
+    <block type="screen_info">
+        <field name="PROP">WIDTH</field>
+    </block>
+    <block type="screen_info">
+        <field name="PROP">HEIGHT</field>
     </block>
 </category>
 <category name="test blocks" colour="#ffffff">

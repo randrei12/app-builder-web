@@ -357,9 +357,59 @@ exports.current_time = {
             ],
             "inputsInline": false,
             "output": null,
-            "colour": 230,
+            "colour": `${colors[8]}`,
             "tooltip": "",
             "helpUrl": ""
         });
+    }
+}
+
+exports.seconds_since_1970 = {
+    init: function () {
+        this.jsonInit({
+            "type": "seconds_since_1970",
+            "message0": "seconds elapsed since 1970",
+            "output": null,
+            "colour": `${colors[8]}`,
+            "tooltip": "",
+            "helpUrl": ""
+        });
+    }
+}
+
+exports.screen_info = {
+    init: function () {
+        this.jsonInit({
+            "type": "screen_info",
+            "message0": "screen's  %1",
+            "args0": [
+                {
+                    "type": "field_dropdown",
+                    "name": "PROP",
+                    "options": [
+                        [
+                            "width",
+                            "WIDTH"
+                        ],
+                        [
+                            "height",
+                            "HEIGHT"
+                        ],
+                        [
+                            "aspect-ratio",
+                            "ASP-RATIO"
+                        ],
+                        [
+                            "color-depth",
+                            "COLOR-DPT"
+                        ]
+                    ]
+                }
+            ],
+            "output": null,
+            "colour": `${colors[8]}`,
+            "tooltip": "",
+            "helpUrl": ""
+        })
     }
 }

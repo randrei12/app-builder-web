@@ -76,3 +76,33 @@ exports.current_time = block => {
             return ['', javascriptGenerator.ORDER_NONE];
     }
 }
+
+exports.seconds_since_1970 = block => {
+    console.log(block);
+    return [new Date().getTime(), javascriptGenerator.ORDER_NONE];
+}
+
+exports.screen_info = block => {
+    const option = block.getFieldValue('PROP');
+    switch (option) {
+        case 'WIDTH':
+            return ['window.screen.width', javascriptGenerator.ORDER_NONE];
+        case 'HEIGHT':
+            return ['window.screen.height', javascriptGenerator.ORDER_NONE];
+        case 'ASP-RATIO':
+            const func = javascriptGenerator.provideFunction_('calcAspectRatio', `
+                function ${javascriptGenerator.FUNCTION_NAME_PLACEHOLDER_}(a, b) {
+                    let r = a % b;
+                    while (r) {
+                        a = b;
+                        b = r;
+                        r = a % b;
+                    }
+                    return window.screen.width / b + ':' + window.screen.height / b;
+                }
+            `)
+            return [`${func}(window.screen.width, window.screen.height)`, javascriptGenerator.ORDER_FUNCTION_CALL];
+        case 'COLOR-DPT':
+            return ['window.screen.colorDepth', javascriptGenerator.ORDER_NONE];
+    }
+}
