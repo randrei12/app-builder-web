@@ -1,7 +1,8 @@
-import template from '../converter/template';
+import template from './html_template';
 
 interface HTMLConverter {
     setTarget: (param: any) => void;
+    setJavaScript: (code: any) => void;
     convert: () => void;
 }
 
@@ -12,24 +13,28 @@ function droppedToElem(elem: any) {
     if (!['screen', 'div'].includes(elem.type)) clone.innerText = html.innerText;
     clone.setAttribute('class', elem.id);
     elem.children.get().forEach((child: any) => clone.append(droppedToElem(child)));
-    console.log({html, clone});
     return clone;
-    
 }
 
 class HTMLConverter {
     constructor() {
         let target: any;
+        let javascript = '';
 
         this.setTarget = param => target = param;
         this.convert = () => {
             const data = droppedToElem(target);
             const a = document.createElement('a');
-            a.setAttribute('href', 'data:text/plain;charset=utf-8, ' + template + encodeURIComponent(data.outerHTML));
+            a.setAttribute('href', 'data:text/plain;charset=utf-8, ' + template + encodeURIComponent(data.outerHTML) + javascript);
             a.download = 'index.html';
             a.click();            
         }
+
+        this.setJavaScript = code => javascript += `<script type="module">${code}</script>`;
     }
 }
 
 export default HTMLConverter;
+
+// exports.HTMLConverter = HTMLConverter;
+// exports.droppedToElem = droppedToElem;

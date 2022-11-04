@@ -413,3 +413,91 @@ exports.screen_info = {
         })
     }
 }
+
+exports.user_color_scheme = {
+    init: function () {
+        this.jsonInit({
+            "type": "user_color_scheme",
+            "message0": "user prefers %1 mode",
+            "args0": [
+                {
+                    "type": "field_dropdown",
+                    "name": "SCHEME",
+                    "options": [
+                        [
+                            "dark",
+                            "DARK"
+                        ],
+                        [
+                            "light",
+                            "LIGHT"
+                        ]
+                    ]
+                }
+            ],
+            "output": null,
+            "colour": `${colors[8]}`,
+            "tooltip": "",
+            "helpUrl": ""
+        });
+    }
+}
+
+exports.number_with_precision = {
+    init: function () {
+        this.jsonInit({
+            "type": "number_with_precision",
+            "message0": "%1 with %2 %3 decimals",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "NUMBER",
+                    "check": "Number"
+                },
+                {
+                    "type": "input_dummy"
+                },
+                {
+                    "type": "input_value",
+                    "name": "DECIMALS",
+                    "check": "Number"
+                }
+            ],
+            "inputsInline": true,
+            "output": "Number",
+            "colour": `${colors[2]}`,
+            "tooltip": "",
+            "helpUrl": ""
+        })
+    }
+}
+
+exports.device_has_connection = {
+    init: function () {
+        this.jsonInit({
+            "type": "device_has_connection",
+            "message0": "device is %1",
+            "args0": [
+              {
+                "type": "field_dropdown",
+                "name": "OPT",
+                "options": [
+                  [
+                    "online",
+                    "ONLINE"
+                  ],
+                  [
+                    "offline",
+                    "OFFLINE"
+                  ]
+                ]
+              }
+            ],
+            "inputsInline": true,
+            "output": "Boolean",
+            "colour": `${colors[8]}`,
+            "tooltip": "",
+            "helpUrl": ""
+          })
+    }
+}

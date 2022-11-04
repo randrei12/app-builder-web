@@ -175,12 +175,24 @@ xml.innerHTML = `
             </shadow>
         </value>
     </block>
-    <block type="math_modulo"></block>
+    <block type="math_modulo">
+        <value name="DIVIDEND">
+            <shadow type="math_number">
+                <field name="NUM">5</field>
+            </shadow>
+        </value>
+        <value name="DIVISOR">
+            <shadow type="math_number">
+                <field name="NUM">100</field>
+            </shadow>
+        </value>
+    </block>
     <block type="math_round"></block>
     <block type="math_single"></block>
     <block type="math_trig"></block>
     <block type="math_number_property"></block>
     <block type="math_random_int"></block>
+    <block type="number_with_precision"></block>
 </category>
 <category name="Text" colour="#ac8304">
     <block type="text"></block>
@@ -627,6 +639,8 @@ xml.innerHTML = `
     <block type="screen_info">
         <field name="PROP">HEIGHT</field>
     </block>
+    <block type="user_color_scheme"></block>
+    <block type="device_has_connection"></block>
 </category>
 <category name="test blocks" colour="#ffffff">
     <block type="text_print">

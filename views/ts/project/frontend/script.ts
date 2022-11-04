@@ -1,16 +1,13 @@
 import './ux/leftSeparator';
-import './functional/converter';
 import { stylesToHTML, switchTab, changeTab } from './ux/rightInter'
 import { specialTypes, element_template } from './ux/elements/types';
 import { stylesheet } from './ux/elements/styles';
-import HTMLConverter from './functional/converter';
 
 const topInfoTitle: HTMLElement = document.querySelector('.topInfo > span');
 const topInfoInput: HTMLInputElement = document.querySelector('.topInfo > input');
 const deleteButton: HTMLButtonElement = document.querySelector('.topInfo button');
 const rightContent: HTMLElement = document.querySelector('.rightElements > .content');
 const buttons: NodeListOf<HTMLElement> = document.querySelectorAll('.elementsPanel > .container > button');
-const convertBtn = document.querySelector('#convertBtn');
 const screenElements: DroppedElement[] = [];
 
 interface DroppedElement {
@@ -184,6 +181,7 @@ class DroppedElement {
 const deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
 deviceScreen.focus();
 screenElements.push(deviceScreen);
+setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
 
 buttons.forEach(button => {
     button.addEventListener('click', () => {
@@ -202,10 +200,6 @@ buttons.forEach(button => {
         console.log(screenElements);  
     });
 });
-
-const converter = new HTMLConverter();
-converter.setTarget(deviceScreen);
-convertBtn.addEventListener('click', () => converter.convert());
 
 window.onclick = e => {
     const path = e.composedPath();

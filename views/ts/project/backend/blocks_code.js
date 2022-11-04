@@ -106,3 +106,21 @@ exports.screen_info = block => {
             return ['window.screen.colorDepth', javascriptGenerator.ORDER_NONE];
     }
 }
+
+exports.user_color_scheme = block => {
+    const option = block.getFieldValue('SCHEME');
+    return [`matchMedia('(prefers-color-scheme: ${option})').matches`, javascriptGenerator.ORDER_NONE];
+}
+
+exports.number_with_precision = block => {
+    const number = block.getFieldValue('NUMBER');
+    const decimals = block.getFieldValue('DECIMALS');
+    const tens = Math.pow(10, parseInt(decimals));
+    return [`Math.floor(${number} * ${tens}) / ${tens}`, javascriptGenerator.ORDER_NONE];
+
+}
+
+exports.device_has_connection = block => {
+    const option = block.getFieldValue('OPT');
+    return [`navigator.onLine === ${option === 'ONLINE'}`, javascriptGenerator.ORDER_NONE];
+}
