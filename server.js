@@ -6,7 +6,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use('/assets', express.static('views/assets'));
 app.use('/css', express.static('views/css'));
-app.use('/js', express.static('views/js'));
+app.use('/js', express.static('views/dist'));
 // app.use(express.static('views'));
 // app.use(express.static('views'));
 // app.use(express.static('views'));

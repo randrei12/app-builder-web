@@ -29,6 +29,6 @@ module.exports = [{
     },
     output: {
         filename: 'project.js',
-        path: path.resolve(__dirname, 'views', 'js'),
+        path: path.resolve(__dirname, 'views', 'dist'),
     },
 }];

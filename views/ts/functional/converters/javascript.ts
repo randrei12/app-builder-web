@@ -1,6 +1,6 @@
 interface JSConverter {
     setTemplate: (temp: template) => void;
-    convert: () => void;
+    convert: ({js, workspace}: { workspace: any, js: any }) => void;
 }
 
 type template = {
@@ -12,11 +12,13 @@ class JSConverter {
         let template: template;
 
         this.setTemplate = (temp: template) => template = temp
-        this.convert = () => {
+        this.convert = ({js, workspace}) => {
             let code = '';
             template.nodes.forEach(node => {
                 code += `const ${node} = document.querySelector('.${node}');\n`;
             });
+
+            code += js.workspaceToCode(workspace);
             return code;
         };
     }

@@ -237,7 +237,6 @@ exports.controls_if = {
             'helpUrl': '%{BKY_CONTROLS_IF_HELPURL}',
             'suppressPrefixSuffix': true,
             'mutator': 'controls_if_mutator',
-            'extensions': ['controls_if_tooltip'],
         });
     }
 }
@@ -478,26 +477,59 @@ exports.device_has_connection = {
             "type": "device_has_connection",
             "message0": "device is %1",
             "args0": [
-              {
-                "type": "field_dropdown",
-                "name": "OPT",
-                "options": [
-                  [
-                    "online",
-                    "ONLINE"
-                  ],
-                  [
-                    "offline",
-                    "OFFLINE"
-                  ]
-                ]
-              }
+                {
+                    "type": "field_dropdown",
+                    "name": "OPT",
+                    "options": [
+                        [
+                            "online",
+                            "ONLINE"
+                        ],
+                        [
+                            "offline",
+                            "OFFLINE"
+                        ]
+                    ]
+                }
             ],
             "inputsInline": true,
             "output": "Boolean",
             "colour": `${colors[8]}`,
             "tooltip": "",
             "helpUrl": ""
-          })
+        })
+    }
+}
+
+exports.element_on_click = {
+    init: function () {
+        this.jsonInit({
+            "type": "element_on_click",
+            "message0": "when %1 is clicked %2 do %3",
+            "args0": [
+                {
+                    "type": "field_dropdown",
+                    "name": "ELEMENT",
+                    "options": [
+                        [
+                            "option",
+                            "OPTIONNAME"
+                        ]
+                    ]
+                },
+                {
+                    "type": "input_dummy"
+                },
+                {
+                    "type": "input_statement",
+                    "name": "ACTIONS"
+                }
+            ],
+            "inputsInline": false,
+            "colour": 230,
+            "tooltip": "",
+            "helpUrl": "",
+            "extensions": ["set_elements"]
+        })
     }
 }
