@@ -533,3 +533,36 @@ exports.element_on_click = {
         })
     }
 }
+
+exports.element_on_load = {
+    init: function () {
+        this.jsonInit({
+            "type": "element_on_load",
+            "message0": "when %1 is loaded %2 do %3",
+            "args0": [
+                {
+                    "type": "field_dropdown",
+                    "name": "ELEMENT",
+                    "options": [
+                        [
+                            "option",
+                            "OPTIONNAME"
+                        ]
+                    ]
+                },
+                {
+                    "type": "input_dummy"
+                },
+                {
+                    "type": "input_statement",
+                    "name": "ACTIONS"
+                }
+            ],
+            "inputsInline": false,
+            "colour": 230,
+            "tooltip": "",
+            "helpUrl": "",
+            "extensions": ["set_elements"]
+        })
+    }
+}

@@ -7,7 +7,9 @@ function updateCategories({xml, elements, workspace, js, htmlConverter}) {
     elements.forEach(element => {
         js.nodes.push(element.id);
         let category = document.createElement('category');
-        category.innerHTML = `<block type="element_on_click"><field name="ELEMENT">${element.name}</field></block>`;
+        category.innerHTML = `
+        <block type="element_on_click"><field name="ELEMENT">${element.name}</field></block>
+        <block type="element_on_load"><field name="ELEMENT">${element.name}</field></block>`;
         category.setAttribute('name', element.name);
         category.setAttribute('colour', '#A8A8A8');
         copy_xml.appendChild(category);

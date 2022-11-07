@@ -134,3 +134,13 @@ exports.element_on_click = block => {
         ${generateError(`Error on block WHEN ${block.getField('ELEMENT').selectedOption_[0]} IS CLICKED DO`)}
     }`;
 }
+
+exports.element_on_load = block => {
+    const element = block.getFieldValue('ELEMENT');
+    var statements = javascriptGenerator.statementToCode(block, 'ACTIONS');
+    return `try {
+        ${element}.addEventListener('load', () => {${statements}});
+    } catch {
+        ${generateError(`Error on block WHEN ${block.getField('ELEMENT').selectedOption_[0]} IS LOADED DO`)}
+    }`;
+}

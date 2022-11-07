@@ -26,6 +26,7 @@ class HTMLConverter {
             const data = droppedToElem(target);
             const a = document.createElement('a');
             a.setAttribute('href', 'data:text/plain;charset=utf-8, ' + template + encodeURIComponent(data.outerHTML) + javascript);
+            console.log(template + data.outerHTML + javascript);
             a.download = 'index.html';
             a.click();            
         }
