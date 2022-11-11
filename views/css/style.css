@@ -341,6 +341,7 @@ body {
 
 .rightActions button {
     width: 40px;
+    min-width: fit-content;
 }
 
 .rightActions .accountButton {

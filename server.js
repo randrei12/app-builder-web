@@ -12,14 +12,18 @@ app.use('/js', express.static('views/dist'));
 // app.use(express.static('views'));
 // app.use(express.static('views'));
 
-app.get('/project', (req, res) => {
-    res.redirect('/project/design');
-})
+app.get('/projects', (req, res) => {
+    res.render('projectsList');
+});
 
-app.get('/project/:type', (req, res) => {
-    if (!['design', 'blocks'].includes(req.params.type)) return res.redirect('/project/design');
+app.get('/projects/:id', (req, res) => {
+    res.redirect(`/projects/${req.params.id}/design`);
+});
+
+app.get('/projects/:id/:type', (req, res) => {
+    if (!['design', 'blocks'].includes(req.params.type)) return res.redirect('/project/:id/design');
     res.render('project');
-})
+});
 
 app.get('/', (req, res) => {
     res.redirect('/project')
