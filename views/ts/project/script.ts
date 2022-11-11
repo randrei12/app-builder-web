@@ -1,5 +1,6 @@
 import './frontend/script';
 import './backend/script';
+const Blockly = require('blockly');
 
 const types = ['design', 'blocks'];
 const type = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
@@ -23,6 +24,7 @@ navButtons.forEach((btn, index) => {
 });
 
 function setActive(index: number): void {
+    Blockly.DropDownDiv.hide();
     navButtons[index].className = 'current';
     components[index].classList.add('active'); //setting the active class to other component
     navButtons[1 - index].className = ''; //remove current class from other button
