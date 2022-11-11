@@ -12,7 +12,6 @@ import { generateError } from './utils';
 
 let jsCompileTemplate = {};
 const workspace = Blockly.inject('blockly', { toolbox: xml, zoom: { controls: true, wheel: true, startScale: 1, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 }, theme });
-
 const convertBtn = document.querySelector('#convertBtn');
 
 const htmlConverter = new HTMLConverter();

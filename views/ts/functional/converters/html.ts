@@ -31,7 +31,7 @@ class HTMLConverter {
             a.click();            
         }
 
-        this.setJavaScript = code => javascript += `<script type="module">${code}</script>`;
+        this.setJavaScript = code => javascript = `<script type="module">${code}</script>`;
     }
 }
 
