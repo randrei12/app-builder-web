@@ -26,7 +26,7 @@ app.get('/projects/:id/:type', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.redirect('/project')
+    res.redirect('/projects')
 });
 
 app.listen(process.env.PORT, () => {
