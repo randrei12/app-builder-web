@@ -1,29 +1,35 @@
 :root {
     --project-base-color: #EFEFEF;
+    --project-secondary-color: #dbdbdb;
     --project-footer-color: #ececec;
+    --project-footer-button: #1d1d1d;
     --project-border: #00000040;
 }
 
 .projectsList {
-    display: flex;
-    flex-wrap: nowrap;
+    display: grid;
+    /* grid-auto-columns: a; */
+    justify-content: center;
+    grid-template-columns: repeat(auto-fit, 200px);
+    padding: 5px 10%;
+    grid-gap: 30px;
 }
 
-.projectsList .project {
+.projectsList .project, .createProject {
     background: var(--project-base-color);
     border-radius: 25px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    width: 200px;
-    height: 200px;
+    width: clamp(200px, 200px, 200px);
+    height: clamp(200px, 200px, 200px);
     padding: 5px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     transition: color 0.2s ease-in-out;
     transition: background 0.2s ease-in-out;
 }
 
-.projectsList .project:hover {
+.projectsList .project:hover, .createProject:hover {
     cursor: pointer;
     background: var(--color3);
     color: white;
@@ -83,6 +89,7 @@
 
 .project .footer i {
     font-size: 17px;
+    color: var(--project-footer-button);
     /* width: 25px; */
     /* height: 25px; */
     /* padding: 2px; */
@@ -91,4 +98,59 @@
 .project .footer button:hover {
     background: var(--project-border);
     cursor: unset;
+}
+
+.searchDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.searchInput {
+    border: 1px solid var(--project-border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+    height: 40px;
+    width: 400px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.searchInput i {
+    margin: 0 10px;
+}
+
+.searchInput input {
+    border: none;
+    height: 100%;
+    width: 100%;
+    border-radius: 0px;
+    outline: none;
+    font-size: 18px;
+}
+
+.createProject {
+    align-items: center;
+    justify-content: center;
+}
+
+.createProject div {
+    background: var(--project-secondary-color);
+    width: 40%;
+    height: 40%;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    transition: background 0.2s ease-in-out;
+    color: var(--project-footer-button);
+}
+
+.createProject:hover div {
+    background: var(--color3-hover);
+    color: white;
 }

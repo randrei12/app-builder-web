@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/pages/projectsList.css">
+    <script src="/ux/pages/projectsList.js" defer></script>
     <script src="https://kit.fontawesome.com/e563cbeefe.js" crossorigin="anonymous"></script>
     <title>Document</title>
 </head>
@@ -22,27 +23,40 @@
         </div>
     </div>
     <div class="component active">
+        <div class="searchDiv">
+            <div class="searchInput">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search projects...">
+            </div>
+        </div>
         <div class="projectsList">
-            <div class="project">
-                <div class="header">
-                    <img src="/assets/icon.png" alt="">
-                    <h1>Project1</h1>
-                </div>
-                <div class="footer">
-                    <div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                    </div>
-                    <div>
-                        <button><i class="fa-solid fa-play"></i></button>
-                        <button><i class="fa-solid fa-share-nodes"></i></button>
-                        <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                    </div>
+            <div class="createProject">
+                <div>
+                    <i class="fa-solid fa-plus"></i>
                 </div>
             </div>
+            <% projects.forEach(project => { %>
+                <div class="project">
+                    <div class="header">
+                        <img src="/assets/icon.png" alt="">
+                        <h1><%= project.name %></h1>
+                    </div>
+                    <div class="footer">
+                        <div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div>
+                            <button><i class="fa-solid fa-play"></i></button>
+                            <button><i class="fa-solid fa-share-nodes"></i></button>
+                            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
         </div>
     </div>
 </body>
