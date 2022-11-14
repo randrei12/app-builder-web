@@ -12,6 +12,11 @@
     --color3-hover: rgb(7, 140, 192);
     --color3-active: rgb(6, 102, 139);
     --color4: rgb(33, 85, 205);
+    --project-base-color: #EFEFEF;
+    --project-secondary-color: #dbdbdb;
+    --project-footer-color: #ececec;
+    --project-footer-button: #1d1d1d;
+    --project-border: #00000040;
 }
 
 body {
