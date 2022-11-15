@@ -16,18 +16,19 @@ class Modal {
     }
 
     generateHTML() {
-        let code = document.createElement('div');
-        code.className = 'modal';
-        code.innerHTML += `<h1>${this.title}</h1>`;
+        let modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML += `<h1>${this.title}</h1>`;
         let close = document.createElement('i');
         close.className = "close fa-solid fa-xmark";
         close.onclick = this.hide;
-        code.append(close);
+        modal.append(close);
         this.elements.forEach(element => {
             let div = document.createElement('div');
             div.className = 'section';
             div.innerHTML = `<span>${element.title}</span>`;
             let elem;
+            let values = []; //here
             switch (element.type) {
                 case 'input':
                     elem = document.createElement(element.type);
@@ -46,11 +47,22 @@ class Modal {
                     });
                     div.appendChild(selectors);
                     break;
-
             }
-            code.appendChild(div);
+            modal.appendChild(div);
         });
-        modalContainer.replaceChildren(code);
+        let footer = document.createElement('div');
+
+        let btn1 = document.createElement('button');
+        btn1.innerText = `<button>Cancel</button>`;
+        btn1.onclick = () => this.hide;
+        let btn2 = document.createElement('button');
+        btn.onclick = () => {
+            newProject({  }) //and here
+        }
+        btn2.innerText = `<button>Create</button>`;
+
+        footer.append(btn1, btn2);
+        modalContainer.replaceChildren(modal);
     }
 
     show() {
@@ -60,6 +72,10 @@ class Modal {
     hide() {
         modalContainer.classList.remove('active');
     }
+}
+
+function newProject({ title, platforms }) {
+
 }
 
 export default Modal;

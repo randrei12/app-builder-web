@@ -92,7 +92,7 @@
     transform: translateY(-50%);
     height: 80%;
     width: 1px;
-    background: var(--border-gray-color);
+    background: rgba(0, 0, 0, 0.2);
     content: "";
 }
 
