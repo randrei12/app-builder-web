@@ -37,17 +37,13 @@ class Modal {
                 case 'selectors':
                     let selectors = document.createElement('div');
                     selectors.className = 'selectorsDiv';
-                    let subSection = document.createElement('div');
-                    subSection.className = 'selectorsSubsection';
                     element.selectors.forEach((option, index) => {
-                        if (index !== element.selectors.length - 1) subSection.innerHTML += `<div class="sep"></div>`;
-                        console.log('btn' + index);
+                        // if (index !== element.selectors.length - 1) subSection.innerHTML += `<div class="sep"></div>`;
                         let btn = document.createElement('button');
                         btn.innerHTML = `<i class="${option}"></i>`;
                         btn.onclick = () => btn.classList.toggle('selected');
-                        subSection.appendChild(btn);
+                        selectors.appendChild(btn);
                     });
-                    selectors.appendChild(subSection);
                     div.appendChild(selectors);
                     break;
 

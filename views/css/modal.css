@@ -61,16 +61,8 @@
     font-size: 20px;
     cursor: pointer;
 }
-
 .selectorsDiv {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    width: fit-content;
     height: 35px;
-}
-
-.selectorsDiv .selectorsSubsection {
     background: white;
     border-radius: 20px;
     /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
@@ -81,13 +73,7 @@
     overflow: hidden;
 }
 
-.selectorsSubsection .sep {
-    height: 80%;
-    width: 1px;
-    background: var(--border-gray-color);
-}
-
-.selectorsSubsection button {
+.selectorsDiv button {
     border: none;
     background: transparent;
     width: 60px;
@@ -96,15 +82,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
-.selectorsSubsection button:hover {
+.selectorsDiv button::before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80%;
+    width: 1px;
+    background: var(--border-gray-color);
+    content: "";
+}
+
+.selectorsDiv button:first-child::before {
+    content: unset; /** we don't the separator to show before first element **/
+}
+
+.selectorsDiv button:hover {
     background: var(--color3);
     color: white;
     cursor: pointer;
 }
 
-.selectorsSubsection button.selected {
+.selectorsDiv button.selected {
     background: var(--color3);
     color: white;
     cursor: pointer;
