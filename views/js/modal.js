@@ -10,8 +10,9 @@
 const modalContainer = document.querySelector('.modalContainer');
 
 class Modal {
-    constructor({ title, elements }) {
+    constructor({ title, type, elements }) {
         this.title = title;
+        this.type = type;
         this.elements = elements;
     }
 
@@ -23,29 +24,38 @@ class Modal {
         close.className = "close fa-solid fa-xmark";
         close.onclick = this.hide;
         modal.append(close);
+        let values = []; //here
         this.elements.forEach(element => {
             let div = document.createElement('div');
             div.className = 'section';
             div.innerHTML = `<span>${element.title}</span>`;
             let elem;
-            let values = []; //here
+            let errorElem = document.createElement('span');
+            errorElem.className = 'ErrorElement';
             switch (element.type) {
                 case 'input':
                     elem = document.createElement(element.type);
                     if (element.placeholder) elem.placeholder = element.placeholder;
-                    div.appendChild(elem);
+                    div.append(elem, errorElem);
+                    values.push({ target: elem, error: errorElem });
                     break;
                 case 'selectors':
+                    let obj = { values: [], error: errorElem };
                     let selectors = document.createElement('div');
                     selectors.className = 'selectorsDiv';
                     element.selectors.forEach((option, index) => {
+                        obj.values[index] = false;
                         // if (index !== element.selectors.length - 1) subSection.innerHTML += `<div class="sep"></div>`;
                         let btn = document.createElement('button');
                         btn.innerHTML = `<i class="${option}"></i>`;
-                        btn.onclick = () => btn.classList.toggle('selected');
+                        btn.onclick = () => {
+                            btn.classList.toggle('selected');
+                            obj.values[index] = !obj.values[index];
+                        }
                         selectors.appendChild(btn);
                     });
-                    div.appendChild(selectors);
+                    values.push(obj);
+                    div.append(selectors, errorElem);
                     break;
             }
             modal.appendChild(div);
@@ -53,15 +63,16 @@ class Modal {
         let footer = document.createElement('div');
 
         let btn1 = document.createElement('button');
-        btn1.innerText = `<button>Cancel</button>`;
-        btn1.onclick = () => this.hide;
+        btn1.innerText = `Cancel`;
+        btn1.onclick = this.hide;
         let btn2 = document.createElement('button');
-        btn.onclick = () => {
-            newProject({  }) //and here
+        btn2.onclick = () => {
+            if (this.type === 'newProject') newProject(values);
         }
-        btn2.innerText = `<button>Create</button>`;
+        btn2.innerText = `Create`;
 
         footer.append(btn1, btn2);
+        modal.append(footer);
         modalContainer.replaceChildren(modal);
     }
 
@@ -74,8 +85,64 @@ class Modal {
     }
 }
 
-function newProject({ title, platforms }) {
+function newProject([title, platformsObj]) {
+    let titleValue = title.target.value.trim();
+    if (titleValue) title.error.innerText = '';
+    else return title.error.innerText = 'The project needs a title';
 
+    if (platformsObj.values.some(e => e)) platformsObj.error.innerText = '';
+    else return platformsObj.error.innerText = 'At least one platform must be choosen';
+
+    let plats = ['web', 'pc', 'mobile'];
+    let platforms = [];
+    for (let i = 0; i < plats.length; i++)
+        if (platformsObj.values[i])
+            platforms.push(plats[i]);
+
+    // let platforms = {};
+    // platformsObj.values.forEach((platform, index) => platforms[plats[index]] = platform); 
+    // ^example of what this code does: [true, true, false] => {web: true, pc: true, mobile: false}
+    // maybe someone will use that useless piece of code
+    // Swal.fire({
+    //     title: 'loading',
+    //     showLoaderOnConfirm: true,
+    //     preConfirm: () => {
+    //         return new Promise(res => {
+    //             fetch('/newProject', {
+    //                 method: 'POST',
+    //                 body: JSON.stringify({
+    //                     title: titleValue,
+    //                     platforms
+    //                 }),
+    //                 headers: {
+    //                     'content-type': 'application/json',
+    //                 }
+    //             }).then(res => {
+    //                 return res.text().then(data => {
+    //                     res([res, data]);
+    //                 });
+    //             });
+    //         });
+    //     },
+    //     allowOutsideClick: () => !Swal.isLoading()
+    // }).then((result) => {
+    //     console.log(result)
+    // })
+    Swal.showLoading();
+    fetch('/newProject', {
+        method: 'POST',
+        body: JSON.stringify({
+            title: titleValue,
+            platforms
+        }),
+        headers: {
+            'content-type': 'application/json',
+        }
+    }).then(res => {
+        if (res.statusCode === 201) {
+            console.log(res);
+        }
+    });
 }
 
 export default Modal;

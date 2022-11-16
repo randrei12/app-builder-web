@@ -3,11 +3,16 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
+const bodyParser = require('body-parser');
+const validator = require('validator');
 
 (async () => await mongoose.connect(process.env.MONGO_URL + '/app-builder'))(); //connect to mongodb
 const db = mongoose.connection;
 
 app.set('view engine', 'ejs');
+app.use(bodyParser.text());
+app.use(bodyParser.json());
+
 app.use('/assets', express.static('views/assets'));
 app.use('/css', express.static('views/css'));
 app.use('/js', express.static('views/dist'));
@@ -31,6 +36,23 @@ app.get('/projects/:id/:type', (req, res) => {
 
 app.get('/', (req, res) => {
     res.redirect('/projects')
+});
+
+app.post('/newProject', async (req, res) => {
+    try {
+        let doc = {};
+        let title = req.body.title.trim();
+        let platforms = req.body.platforms;
+        console.log(!title, ![1, 2, 3].includes(Object.keys(platforms).length), [1, 2, 3].some(e => e == Object.keys(platforms).length));
+        if (!title || ![1, 2, 3].some(e = e == Object.keys(platforms).lenth)) return res.status(400).send('There is a problem with the request body');
+        doc.title = validator.escape(req.body.title);
+        doc.platforms = platforms;
+        let resp = await db.collection('projects').insertOne(doc);
+        console.log(resp);
+        resp.acknowledged ? res.status(201).send(resp.insertedId) : res.status(500).send('An error occured while creating the project');
+    } catch {
+        res.status(500).send('An error occured while creating the project');
+    }
 });
 
 app.listen(process.env.PORT, () => {
