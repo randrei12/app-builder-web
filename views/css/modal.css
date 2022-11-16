@@ -1,0 +1,114 @@
+.modalContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.377);
+    backdrop-filter: blur(3px);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.modalContainer.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modalContainer .modal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(600px, 600px, 100%);
+    height: fit-content;
+    max-height: 100%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    text-align: center;
+    padding: 10px;
+}
+
+.modalContainer .modal .section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 25px;
+}
+
+.modal .section input {
+    width: 100%;
+    height: 40px;
+    font-size: 20px;
+    background: rgb(243, 243, 243);
+    border: none;
+    border-bottom: solid var(--color3) 2px;
+    border-radius: 5px 5px 0 0;
+    outline: none;
+    padding: 0 10px;
+}
+
+.modal .section span {
+    margin-bottom: 5px;
+}
+
+.modalContainer .modal .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.selectorsDiv {
+    height: 35px;
+    background: white;
+    border-radius: 20px;
+    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+    border: 1px solid var(--border-gray-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+}
+
+.selectorsDiv button {
+    border: none;
+    background: transparent;
+    width: 60px;
+    height: 100%;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.selectorsDiv button::before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 80%;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.2);
+    content: "";
+}
+
+.selectorsDiv button:first-child::before {
+    content: unset; /** we don't the separator to show before first element **/
+}
+
+.selectorsDiv button:hover {
+    background: var(--color3);
+    color: white;
+    cursor: pointer;
+}
+
+.selectorsDiv button.selected {
+    background: var(--color3);
+    color: white;
+    cursor: pointer;
+    font-size: 24px;
+}
