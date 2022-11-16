@@ -43,12 +43,10 @@ app.post('/newProject', async (req, res) => {
         let doc = {};
         let title = req.body.title.trim();
         let platforms = req.body.platforms;
-        console.log(!title, ![1, 2, 3].includes(Object.keys(platforms).length), [1, 2, 3].some(e => e == Object.keys(platforms).length));
-        if (!title || ![1, 2, 3].some(e = e == Object.keys(platforms).lenth)) return res.status(400).send('There is a problem with the request body');
+        if (!title || ![1, 2, 3].includes(Object.keys(platforms).length)) throw new Error();
         doc.title = validator.escape(req.body.title);
         doc.platforms = platforms;
         let resp = await db.collection('projects').insertOne(doc);
-        console.log(resp);
         resp.acknowledged ? res.status(201).send(resp.insertedId) : res.status(500).send('An error occured while creating the project');
     } catch {
         res.status(500).send('An error occured while creating the project');

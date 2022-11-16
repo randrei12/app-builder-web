@@ -10,5 +10,3 @@ newProjectButton.onclick = () => {
     modal.generateHTML();
     modal.show();
 }
-
-newProjectButton.click();

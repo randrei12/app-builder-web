@@ -85,7 +85,7 @@ class Modal {
     }
 }
 
-function newProject([title, platformsObj]) {
+async function newProject([title, platformsObj]) {
     let titleValue = title.target.value.trim();
     if (titleValue) title.error.innerText = '';
     else return title.error.innerText = 'The project needs a title';
@@ -99,37 +99,13 @@ function newProject([title, platformsObj]) {
         if (platformsObj.values[i])
             platforms.push(plats[i]);
 
-    // let platforms = {};
-    // platformsObj.values.forEach((platform, index) => platforms[plats[index]] = platform); 
-    // ^example of what this code does: [true, true, false] => {web: true, pc: true, mobile: false}
-    // maybe someone will use that useless piece of code
-    // Swal.fire({
-    //     title: 'loading',
-    //     showLoaderOnConfirm: true,
-    //     preConfirm: () => {
-    //         return new Promise(res => {
-    //             fetch('/newProject', {
-    //                 method: 'POST',
-    //                 body: JSON.stringify({
-    //                     title: titleValue,
-    //                     platforms
-    //                 }),
-    //                 headers: {
-    //                     'content-type': 'application/json',
-    //                 }
-    //             }).then(res => {
-    //                 return res.text().then(data => {
-    //                     res([res, data]);
-    //                 });
-    //             });
-    //         });
-    //     },
-    //     allowOutsideClick: () => !Swal.isLoading()
-    // }).then((result) => {
-    //     console.log(result)
-    // })
+    Swal.fire({
+        title: 'Creating project...', 
+        text: 'We are building the project just for you!',
+        allowOutsideClick: false,
+    });
     Swal.showLoading();
-    fetch('/newProject', {
+    let res = await fetch('/newProject', {
         method: 'POST',
         body: JSON.stringify({
             title: titleValue,
@@ -138,11 +114,15 @@ function newProject([title, platformsObj]) {
         headers: {
             'content-type': 'application/json',
         }
-    }).then(res => {
-        if (res.statusCode === 201) {
-            console.log(res);
-        }
     });
+    let data = await res.text();
+    if (res.status === 201) location = `/projects/${data.substring(1, data.length - 1)}`;
+    else Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: data,
+    });
+    Swal.hideLoading();
 }
 
 export default Modal;

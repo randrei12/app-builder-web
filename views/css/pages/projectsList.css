@@ -1,6 +1,6 @@
 .projectsList {
     display: grid;
-    /* grid-auto-columns: a; */
+    overflow: auto;
     justify-content: center;
     grid-template-columns: repeat(auto-fit, 200px);
     padding: 5px 10%;
