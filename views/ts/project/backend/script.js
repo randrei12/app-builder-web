@@ -8,6 +8,7 @@ Object.assign(Blockly.Blocks, blocks); //adding custom blocks to blockly blocks
 import * as codes from './blocks_code';
 Object.assign(javascriptGenerator, codes); //adding custom blocks' code to javascript generator
 import xml from './toolbox';
+import saveBlocksState from './blocks_state';
 import { generateError } from './utils';
 
 let jsCompileTemplate = {};
@@ -31,6 +32,7 @@ convertBtn.addEventListener('click', () => {
 });
 
 workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnected blocks
+workspace.addChangeListener(saveBlocksState);
 
 //* for debbuging
 window.JS = javascriptGenerator;

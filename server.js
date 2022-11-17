@@ -21,7 +21,7 @@ app.use('/ux', express.static('views/js'));
 app.get('/projects', (req, res) => {
     db.collection('projects').find({}).toArray((err, projects) => {
         if (err) throw err;
-        res.render('projectsList', { projects });
+        res.render('projectsList', { projects: projects.reverse() });
     });
 });
 

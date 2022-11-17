@@ -325,6 +325,7 @@ body {
 
 .topZone img {
     height: 100%;
+    cursor: pointer;
 }
 
 .topZone .projectTitle {

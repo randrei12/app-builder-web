@@ -7,7 +7,7 @@
         "webpack": "webpack",
         "webpack:watch": "webpack --watch",
         "serve": "node server.js",
-        "serve:watch": "nodemon server.js",
+        "serve:watch": "nodemon --inspect server.js",
         "start": "concurrently \"npm run webpack\" \"npm run serve\"",
         "start:watch": "concurrently \"npm run webpack:watch\" \"npm run serve:watch\"",
         "mongo": "node dev/generateMongo.js"

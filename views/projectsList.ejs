@@ -17,7 +17,7 @@
 <body>
     <div class="topZone">
         <div style="max-width: 33%;">
-            <img src="/assets/logo.png" alt="">
+            <img src="/assets/logo.png" alt="" onclick="location = '/'">
         </div>
         <div class="rightActions">
             <button>PRO</button>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <% projects.forEach(project => { %>
-                <div class="project" onclick="location = `/projects/<%= project._id %>`">
+                <div class="project" data-id="<%= project._id %>">
                     <div class="header">
                         <img src="/assets/icon.png" alt="">
                         <h1><%= project.title %></h1>
