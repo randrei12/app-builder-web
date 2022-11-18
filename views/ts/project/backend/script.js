@@ -1,3 +1,6 @@
+window.project = {}
+project.id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
+
 import Blockly from 'blockly';
 import HTMLConverter from '../../functional/converters/html';
 import JSConverter from '../../functional/converters/javascript';
@@ -32,7 +35,20 @@ convertBtn.addEventListener('click', () => {
 });
 
 workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnected blocks
-workspace.addChangeListener(saveBlocksState);
+workspace.addChangeListener(saveBlocksState); //activate save blocks state listener
+
+//load blocks from database
+fetch('/getProjectCode', {
+    method: 'POST',
+    body: JSON.stringify({
+        id: window.project.id
+    }),
+    headers: {'Content-Type': 'application/json'},
+}).then(res => {
+    if (res.status === 200) res.json().then(data => Blockly.serialization.workspaces.load(data, workspace)); //load into workspace blocks' state
+    else location.href = '/';
+});
+
 
 //* for debbuging
 window.JS = javascriptGenerator;

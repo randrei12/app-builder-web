@@ -8,6 +8,7 @@ const validator = require('validator');
 
 (async () => await mongoose.connect(process.env.MONGO_URL + '/app-builder'))(); //connect to mongodb
 const db = mongoose.connection;
+const { ObjectId } = mongoose.Types; //getting ObjectId for searching by id
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.text());
@@ -50,6 +51,35 @@ app.post('/newProject', async (req, res) => {
         resp.acknowledged ? res.status(201).send(resp.insertedId) : res.status(500).send('An error occured while creating the project');
     } catch {
         res.status(500).send('An error occured while creating the project');
+    }
+});
+
+app.post('/updateProjectCode/:property', async (req, res) => {
+    let { code, id } = req.body;
+    try {
+        let obj = JSON.parse(code);
+        if (typeof obj.blocks.languageVersion !== 'number' || !Array.isArray(obj.blocks.blocks)) throw new Error();
+    } catch {
+        return res.status(500).send('Malformed request data');
+    }
+    
+    try {
+        let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.blocks': code }});
+        if (!resp.acknowledged || resp.modifiedCount === 0) throw new Error();
+    } catch {
+        return res.status(500).send('An error occured while updating the project code');
+    }
+    
+    res.status(200).send('ok');
+});
+
+app.post('/getProjectCode', async (req, res) => {
+    try {
+        let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
+        if (!code) throw new Error();
+        res.status(200).send(code.data.blocks);
+    } catch {
+        res.status(500).send('An error occured while retrieving the project data');
     }
 });
 
