@@ -5,9 +5,11 @@ const specialTypes = {
 }
 
 interface element_template {
-    type: string;
-    id: string;
+    type?: string;
+    id?: string;
     prebuild?: HTMLElement;
+    name?: string;
+    from?: any;
 }
 
 export { specialTypes, element_template };

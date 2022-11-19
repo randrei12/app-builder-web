@@ -20,6 +20,7 @@ interface DroppedElement {
     unfocus: () => void;
     getHtml: () => HTMLElement;
     remove: () => void;
+    export: () => object;
     style: { set: (styles: object) => void; get: () => CSSStyleDeclaration; };
     innerText: { set: (text: string) => void; get: () => string; };
     src: { set: (source: string) => any; get: () => any; };
@@ -29,13 +30,28 @@ interface DroppedElement {
 
 class DroppedElement {
     constructor(obj: element_template) {
-        this.type = obj.type;
-        this.id = obj.id;
-        this.isFocused = false;
-        let name: string = this.type + (screenElements.filter(e => e.type === this.type).length + 1);
-        this.name = name.charAt(0).toUpperCase() + name.slice(1);
-        let element: any;
+        let name: string;
         let children: DroppedElement[] = [];
+        let element: any;
+
+        if (obj.from) {
+            if (obj.from.public.type === 'screen') element = document.querySelector('.deviceScreen');
+            Object.assign(this, obj.from.public);
+            name = obj.from.private.name;
+            screenElements.push(this);
+            obj.from.private.children.forEach((el: object) => {
+                let child = new DroppedElement({ from: el });
+                child.generateElement(element);
+                children.push(child);
+            });
+        } else {
+            this.type = obj.type;
+            this.id = obj.id;
+            this.isFocused = false;
+            name = obj.name || this.type + (screenElements.filter(e => e.type === this.type).length + 1);
+            this.name = name.charAt(0).toUpperCase() + name.slice(1);
+        }
+        
         
         let styles: object[] = [stylesheet.global, stylesheet[this.type as keyof object] as object];
 
@@ -95,6 +111,7 @@ class DroppedElement {
                         break;
                 }
             });
+            
 
             const updateInputsOnChangeTabs = () => {
                 inputs.forEach((input, i) => {  
@@ -146,22 +163,40 @@ class DroppedElement {
         };
         this.getHtml = () => element;
         this.style = {
-            set: styles => Object.assign(element.style, styles),
+            set: styles => {
+                Object.assign(element.style, styles);
+                updateDB();
+            },
             get: () => element.style
         };
         this.innerText = {
-            set: text => element.innerText = text,
+            set: text => {
+                element.innerText = text;
+                updateDB();
+            },
             get: () => element.innerText
         };
         this.src = {
-            set: source => element.src = source,
+            set: source => {
+                element.src = source;
+                updateDB();
+            },
             get: () => element.src
         };
         this.children = {
-            add: (elem: DroppedElement) => { children.push(elem) },
+            add: (elem: DroppedElement) => { 
+                children.push(elem);
+                updateDB();
+            },
             get: () => children,
-            remove: (elem: DroppedElement) => { children.splice(children.indexOf(elem), 1) },
-            clear: () => children = children.filter(e => Object.keys(e).length > 0)
+            remove: (elem: DroppedElement) => { 
+                children.splice(children.indexOf(elem), 1);
+                updateDB(); 
+            },
+            clear: () => { 
+                children = children.filter(e => Object.keys(e).length > 0);
+                updateDB();
+            }
         };
         this.remove = () => {
             if (this.type === 'screen') return;
@@ -175,11 +210,30 @@ class DroppedElement {
             parent.children.clear();
             dispatchEvent(new CustomEvent("removeDroppedElement", { detail }));
         }
+
+        this.export = () => {
+            return { public: this, private: { name, children: children.map(e => e.export()) } };
+        }
     }
+
 }
 
-const deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
+let deviceScreen: DroppedElement;
+if (false) {
+    deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
+    updateDB();
+} else {
+    let x = JSON.parse('{"public":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}},"private":{"name":"screen1","children":[{"public":{"type":"button","id":"button1","isFocused":false,"name":"Button1","style":{},"innerText":{},"src":{},"children":{},"parent":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}}},"private":{"name":"button1","children":[]}},{"public":{"type":"text","id":"text2","isFocused":false,"name":"Text1","style":{},"innerText":{},"src":{},"children":{},"parent":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}}},"private":{"name":"text1","children":[]}},{"public":{"type":"button","id":"button3","isFocused":true,"name":"Button2","style":{},"innerText":{},"src":{},"children":{},"parent":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}}},"private":{"name":"button2","children":[]}}]}}');
+    deviceScreen = new DroppedElement({ from: x });
+    //we have to focus each element then unfocus so the saved styles of elements are applied
+    screenElements.forEach(e => {
+        e.focus()
+        e.unfocus();
+    });
+}
+
 deviceScreen.focus();
+
 screenElements.push(deviceScreen);
 setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
 
@@ -197,7 +251,8 @@ buttons.forEach(button => {
         elem.parent = deviceScreen;
         screenElements.forEach(elem => elem.unfocus());
         elem.focus();
-        console.log(screenElements);  
+        console.log(screenElements);
+        updateDB();
     });
 });
 
@@ -212,4 +267,9 @@ window.onclick = e => {
 addEventListener('removeDroppedElement', (e: CustomEvent) => {
     screenElements.splice(screenElements.indexOf(e.detail), 1);
     dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
+    updateDB();
 });
+
+function updateDB() {
+    fetch('/updateProjectCode/design')
+}

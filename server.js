@@ -54,7 +54,11 @@ app.post('/newProject', async (req, res) => {
     }
 });
 
-app.post('/updateProjectCode/:property', async (req, res) => {
+app.post('/updateProjectCode/design', async (req, res) => {
+    //code
+});
+
+app.post('/updateProjectCode/blocks', async (req, res) => {
     let { code, id } = req.body;
     try {
         let obj = JSON.parse(code);
