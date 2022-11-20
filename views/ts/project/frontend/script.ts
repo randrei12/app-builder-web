@@ -3,6 +3,8 @@ import { stylesToHTML, switchTab, changeTab } from './ux/rightInter'
 import { specialTypes, element_template } from './ux/elements/types';
 import { stylesheet } from './ux/elements/styles';
 
+const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
+
 const topInfoTitle: HTMLElement = document.querySelector('.topInfo > span');
 const topInfoInput: HTMLInputElement = document.querySelector('.topInfo > input');
 const deleteButton: HTMLButtonElement = document.querySelector('.topInfo button');
@@ -219,57 +221,79 @@ class DroppedElement {
 }
 
 let deviceScreen: DroppedElement;
-if (false) {
-    deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
-    updateDB();
-} else {
-    let x = JSON.parse('{"public":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}},"private":{"name":"screen1","children":[{"public":{"type":"button","id":"button1","isFocused":false,"name":"Button1","style":{},"innerText":{},"src":{},"children":{},"parent":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}}},"private":{"name":"button1","children":[]}},{"public":{"type":"text","id":"text2","isFocused":false,"name":"Text1","style":{},"innerText":{},"src":{},"children":{},"parent":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}}},"private":{"name":"text1","children":[]}},{"public":{"type":"button","id":"button3","isFocused":true,"name":"Button2","style":{},"innerText":{},"src":{},"children":{},"parent":{"type":"screen","id":"screen1","isFocused":false,"name":"Screen1","style":{},"innerText":{},"src":{},"children":{}}},"private":{"name":"button2","children":[]}}]}}');
-    deviceScreen = new DroppedElement({ from: x });
-    //we have to focus each element then unfocus so the saved styles of elements are applied
-    screenElements.forEach(e => {
-        e.focus()
-        e.unfocus();
+let data;
+(async () => {
+    let res = await fetch('/getProjectDesign', {
+        method: 'POST',
+        body: JSON.stringify({ id }),
+        headers: { 'Content-Type': 'application/json' }
     });
-}
-
-deviceScreen.focus();
-
-screenElements.push(deviceScreen);
-setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
-
-buttons.forEach(button => {
-    button.addEventListener('click', () => {
-        let elemType = button.dataset.type;
-        const elem: DroppedElement = new DroppedElement({
-            type: elemType,
-            id: elemType + screenElements.map(elem => elem.type === elemType).length
+    data = await res.json() || {};
+    
+    if (data) {
+        deviceScreen = new DroppedElement({ from: data });
+        //we have to focus each element then unfocus so the saved styles of elements are applied
+        screenElements.forEach(e => {
+            e.focus()
+            e.unfocus();
         });
-        elem.generateElement(deviceScreen.getHtml());
-        screenElements.push(elem);
-        dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
-        deviceScreen.children.add(elem);
-        elem.parent = deviceScreen;
+    } else {
+        deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
+        updateDB();
+    }
+    
+    deviceScreen.focus();
+    
+    screenElements.push(deviceScreen);
+    setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            let elemType = button.dataset.type;
+            const elem: DroppedElement = new DroppedElement({
+                type: elemType,
+                id: elemType + screenElements.map(elem => elem.type === elemType).length
+            });
+            elem.generateElement(deviceScreen.getHtml());
+            screenElements.push(elem);
+            dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
+            deviceScreen.children.add(elem);
+            elem.parent = deviceScreen;
+            screenElements.forEach(elem => elem.unfocus());
+            elem.focus();
+            console.log(screenElements);
+            updateDB();
+        });
+    });
+    
+    window.onclick = e => {
+        const path = e.composedPath();
+        if (!path.includes(deviceScreen.getHtml())) return;
         screenElements.forEach(elem => elem.unfocus());
-        elem.focus();
-        console.log(screenElements);
+        const target = screenElements.filter(elem => elem.getHtml() === path[0])[0];
+        target.focus();
+    }
+    
+    addEventListener('removeDroppedElement', (e: CustomEvent) => {
+        screenElements.splice(screenElements.indexOf(e.detail), 1);
+        dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
         updateDB();
     });
-});
+})();
 
-window.onclick = e => {
-    const path = e.composedPath();
-    if (!path.includes(deviceScreen.getHtml())) return;
-    screenElements.forEach(elem => elem.unfocus());
-    const target = screenElements.filter(elem => elem.getHtml() === path[0])[0];
-    target.focus();
-}
 
-addEventListener('removeDroppedElement', (e: CustomEvent) => {
-    screenElements.splice(screenElements.indexOf(e.detail), 1);
-    dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
-    updateDB();
-});
-
+let lastDate = new Date().getTime();
 function updateDB() {
-    fetch('/updateProjectCode/design')
+    let currentDate = new Date().getTime();
+    if (currentDate - lastDate < 1000) return;
+    lastDate = currentDate;
+    fetch('/updateProjectCode/design', {
+        method: 'POST',
+        body: JSON.stringify({
+            target: deviceScreen.export(),
+            id
+        }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+    console.log('new fetch for design')
 }

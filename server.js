@@ -55,7 +55,21 @@ app.post('/newProject', async (req, res) => {
 });
 
 app.post('/updateProjectCode/design', async (req, res) => {
-    //code
+    let { target, id } = req.body;
+    try {
+        if (typeof target !== 'object') throw new Error();
+    } catch {
+        res.status(500).send('Malformed request data');
+    }
+
+    try {
+        let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.design': JSON.stringify(target) } });
+        if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
+    } catch {
+        return res.status(500).send('An error occured while updating the project code');
+    }
+    
+    res.status(200).send('ok');
 });
 
 app.post('/updateProjectCode/blocks', async (req, res) => {
@@ -69,7 +83,7 @@ app.post('/updateProjectCode/blocks', async (req, res) => {
     
     try {
         let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.blocks': code }});
-        if (!resp.acknowledged || resp.modifiedCount === 0) throw new Error();
+        if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
     } catch {
         return res.status(500).send('An error occured while updating the project code');
     }
@@ -77,11 +91,21 @@ app.post('/updateProjectCode/blocks', async (req, res) => {
     res.status(200).send('ok');
 });
 
+app.post('/getProjectDesign', async (req, res) => {
+    try {
+        let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
+        if (!code) throw new Error();
+        res.status(200).send(code.data.design || '{}');
+    } catch {
+        res.status(500).send('An error occured while retrieving the project data');
+    }
+});
+
 app.post('/getProjectCode', async (req, res) => {
     try {
         let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
         if (!code) throw new Error();
-        res.status(200).send(code.data.blocks);
+        res.status(200).send(code.data.blocks || '{}');
     } catch {
         res.status(500).send('An error occured while retrieving the project data');
     }

@@ -1,6 +1,3 @@
-window.project = {}
-project.id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
-
 import Blockly from 'blockly';
 import HTMLConverter from '../../functional/converters/html';
 import JSConverter from '../../functional/converters/javascript';
@@ -13,6 +10,8 @@ Object.assign(javascriptGenerator, codes); //adding custom blocks' code to javas
 import xml from './toolbox';
 import saveBlocksState from './blocks_state';
 import { generateError } from './utils';
+
+const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
 
 let jsCompileTemplate = {};
 const workspace = Blockly.inject('blockly', { toolbox: xml, zoom: { controls: true, wheel: true, startScale: 1, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 }, theme });
@@ -41,11 +40,13 @@ workspace.addChangeListener(saveBlocksState); //activate save blocks state liste
 fetch('/getProjectCode', {
     method: 'POST',
     body: JSON.stringify({
-        id: window.project.id
+        id
     }),
     headers: {'Content-Type': 'application/json'},
 }).then(res => {
-    if (res.status === 200) res.json().then(data => Blockly.serialization.workspaces.load(data, workspace)); //load into workspace blocks' state
+    if (res.status === 200) res.json().then(data => {
+        if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
+    }); 
     else location.href = '/';
 });
 
