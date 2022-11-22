@@ -4,6 +4,10 @@ const specialTypes = {
     image: 'img',
 }
 
+const styleTypes = {
+
+}
+
 interface element_template {
     type?: string;
     id?: string;
@@ -12,4 +16,4 @@ interface element_template {
     from?: any;
 }
 
-export { specialTypes, element_template };
+export { specialTypes, styleTypes, element_template };
