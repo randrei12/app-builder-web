@@ -17,7 +17,7 @@ const projects = [...document.querySelectorAll('.projectsList > .project')];
 projects.forEach(project => {
     const projectFooter = project.children[1].children[1];
     project.onclick = e => {
-        if (e.path.includes(projectFooter)) return;
+        if (e.composedPath().includes(projectFooter)) return;
         location.href += `/${project.dataset.id}`;
     }
 });
