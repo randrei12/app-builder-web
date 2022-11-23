@@ -38,6 +38,7 @@ interface buildFromObject {
     text?: string,
     src?: string,
     id?: string,
+    elem?: HTMLElement,
 }
 
 interface DroppedElement {
@@ -46,18 +47,26 @@ interface DroppedElement {
     name: string;
     children: DroppedElement[];
     styles: { [key: string]: string },
+    style: {
+        add: (styles: object) => void,
+        remove: (styles: String[]) => void
+    },
     text: string,
     src?: string,
     buildFromObject: (obj: buildFromObject) => this,
     generateElement: (parent: HTMLElement) => HTMLElement;
+    remove: () => void;
+    createInputs: () => void;
+    focus: () => void;
+    applyStyles: () => void;
 }
 
 class DroppedElement {
     constructor() {
         let element: HTMLElement;
         let elementAllStyles = {};
-        let rightInterSection = [];
-        
+        let rightGroups: HTMLElement[] = [];
+        let inputs: { [key: string]: HTMLInputElement } = {};
 
         this.generateElement = parent => {
             element = document.createElement(specialTypes[this.type as keyof object] || this.type);
@@ -66,18 +75,19 @@ class DroppedElement {
             return element;
         }
 
-        this.styles = {
+        this.style = {
             add: styles => {
                 Object.assign(this.styles, styles);
                 let properties = Object.keys(styles);
                 properties.forEach(property => {
-                    element.style[property as keyof object] = styles[property];
+                    inputs[property].value = styles[property as keyof object];
+                    element.style[property as keyof object] = styles[property as keyof object];
                 });
             },
             remove: styles => {
                 styles.forEach(style => {
-                    element.style[style] = '';
-                    delete this.styles[style];
+                    element.style[style as keyof object] = '';
+                    delete this.styles[style as keyof object];
                 });
             }
         }
@@ -89,27 +99,41 @@ class DroppedElement {
         }
 
         this.createInputs = () => {
-            // rightInterSection = 
-            // let sections = Object.keys(elementAllStyles);
-            // sections.forEach(section => {
-            //     let styles = Object.keys(elementAllStyles[section as keyof object]);
-            //     styles.forEach(style => {
+            // rightSections = 
+            console.log(elementAllStyles);
+            
+            let sections = Object.keys(elementAllStyles);
+            sections.forEach(section => {
+                rightGroups.push(stylesToHTML(section, elementAllStyles[section as keyof object], inputs));
+                
+                // let styles = Object.keys(elementAllStyles[section as keyof object]);
+                // styles.forEach(style => {
 
-            //     });
-            // });
-            // log html shit
-            // console.log(st);
+                // });
+            });
+            console.log(inputs);
+            console.log(rightGroups);
+            
+        }
+        
+        this.applyStyles = () => {
+            //*i have to make this work
+            console.log({styles: this.styles});
+            this.style.add(this.styles);
         }
 
-        this.buildFromObject = ({ name, type, children = [], styles = {}, text, src, id }) => {
+        this.buildFromObject = ({ name, type, children = [], styles = {}, text, src, id, elem }) => {
             this.id = id || type + (screenElements.filter(e => e.type === type).length + 1);
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
             this.children = children.map(child => new DroppedElement().buildFromObject(child));
-            this.styles = {...stylesheetToPlain(stylesheet.global), ...stylesheetToPlain(stylesheet[this.type as keyof object] || {})};
+            this.styles = {...stylesheetToPlain(stylesheet.global), ...stylesheetToPlain(stylesheet[this.type as keyof object] || {}), ...styles};
             elementAllStyles = {...stylesheet.global, ...stylesheet[this.type as keyof object] as object};
+            console.log({1: this.styles, 2: elementAllStyles});
+            
             this.text = text || this.name;
             if (src) this.src = src;
+            if (elem) element = elem;
             return this;
         }
 
@@ -121,6 +145,7 @@ class DroppedElement {
             }
             deleteButton.onclick = () => this.remove();
             element.classList.add('clicked');
+            rightContent.append(...rightGroups);
         }
     }
 }
@@ -316,79 +341,88 @@ class DroppedElement {
 // }
 
 let deviceScreen: DroppedElement;
-let data;
-(async () => {
-    let res = await fetch('/getProjectDesign', {
-        method: 'POST',
-        body: JSON.stringify({ id }),
-        headers: { 'Content-Type': 'application/json' }
-    });
-    data = await res.json() || {};
-    
-    if (data) {
-        deviceScreen = new DroppedElement({ from: data });
-        //we have to focus each element then unfocus so the saved styles of elements are applied
-        screenElements.forEach(e => {
-            e.focus()
-            e.unfocus();
-        });
-    } else {
-        deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
-        updateDB();
-    }
-    
-    deviceScreen.focus();
-    
-    screenElements.push(deviceScreen);
-    setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
-    
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            let elemType = button.dataset.type;
-            const elem: DroppedElement = new DroppedElement({
-                type: elemType,
-                id: elemType + screenElements.map(elem => elem.type === elemType).length
-            });
-            elem.generateElement(deviceScreen.getHtml());
-            screenElements.push(elem);
-            dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
-            deviceScreen.children.add(elem);
-            elem.parent = deviceScreen;
-            screenElements.forEach(elem => elem.unfocus());
-            elem.focus();
-            console.log(screenElements);
-            updateDB();
-        });
-    });
-    
-    window.onclick = e => {
-        const path = e.composedPath();
-        if (!path.includes(deviceScreen.getHtml())) return;
-        screenElements.forEach(elem => elem.unfocus());
-        const target = screenElements.filter(elem => elem.getHtml() === path[0])[0];
-        target.focus();
-    }
-    
-    addEventListener('removeDroppedElement', (e: CustomEvent) => {
-        screenElements.splice(screenElements.indexOf(e.detail), 1);
-        dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
-        updateDB();
-    });
-})();
+deviceScreen = new DroppedElement().buildFromObject({type: 'text', elem: document.querySelector('.deviceScreen'), styles: {backgroundColor: 'red'}}); 
+deviceScreen.createInputs();
+deviceScreen.applyStyles();
+deviceScreen.focus();
 
-
-let lastDate = new Date().getTime();
-function updateDB() {
-    let currentDate = new Date().getTime();
-    if (currentDate - lastDate < 1000) return;
-    lastDate = currentDate;
-    fetch('/updateProjectCode/design', {
-        method: 'POST',
-        body: JSON.stringify({
-            target: deviceScreen.export(),
-            id
-        }),
-        headers: { 'Content-Type': 'application/json' }
-    });
-    console.log('new fetch for design')
+declare global {
+    interface Window { deviceScreen: DroppedElement }
 }
+window.deviceScreen = deviceScreen;
+// let data;
+// (async () => {
+//     let res = await fetch('/getProjectDesign', {
+//         method: 'POST',
+//         body: JSON.stringify({ id }),
+//         headers: { 'Content-Type': 'application/json' }
+//     });
+//     data = await res.json() || {};
+    
+//     if (data) {
+//         deviceScreen = new DroppedElement({ from: data });
+//         //we have to focus each element then unfocus so the saved styles of elements are applied
+//         screenElements.forEach(e => {
+//             e.focus()
+//             e.unfocus();
+//         });
+//     } else {
+//         deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
+//         updateDB();
+//     }
+    
+//     deviceScreen.focus();
+    
+//     screenElements.push(deviceScreen);
+//     setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
+    
+//     buttons.forEach(button => {
+//         button.addEventListener('click', () => {
+//             let elemType = button.dataset.type;
+//             const elem: DroppedElement = new DroppedElement({
+//                 type: elemType,
+//                 id: elemType + screenElements.map(elem => elem.type === elemType).length
+//             });
+//             elem.generateElement(deviceScreen.getHtml());
+//             screenElements.push(elem);
+//             dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
+//             deviceScreen.children.add(elem);
+//             elem.parent = deviceScreen;
+//             screenElements.forEach(elem => elem.unfocus());
+//             elem.focus();
+//             console.log(screenElements);
+//             updateDB();
+//         });
+//     });
+    
+//     window.onclick = e => {
+//         const path = e.composedPath();
+//         if (!path.includes(deviceScreen.getHtml())) return;
+//         screenElements.forEach(elem => elem.unfocus());
+//         const target = screenElements.filter(elem => elem.getHtml() === path[0])[0];
+//         target.focus();
+//     }
+    
+//     addEventListener('removeDroppedElement', (e: CustomEvent) => {
+//         screenElements.splice(screenElements.indexOf(e.detail), 1);
+//         dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
+//         updateDB();
+//     });
+// })();
+
+
+// let lastDate = new Date().getTime();
+// function updateDB() {
+//     let currentDate = new Date().getTime();
+//     if (currentDate - lastDate < 1000) return;
+//     lastDate = currentDate;
+//     fetch('/updateProjectCode/design', {
+//         method: 'POST',
+//         body: JSON.stringify({
+//             target: deviceScreen.export(),
+//             id
+//         }),
+//         headers: { 'Content-Type': 'application/json' }
+//     });
+//     console.log('new fetch for design')
+// }
