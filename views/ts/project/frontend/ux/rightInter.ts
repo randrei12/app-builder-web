@@ -15,7 +15,6 @@ function stylesToHTML(section: string, styles: any) {
     header.classList.add('header');
     header.innerText = section.charAt(0).toUpperCase() + section.replace(/([A-Z])/g, ' $1').slice(1);
     group.append(header);
-    
     Object.getOwnPropertyNames(styles[section as keyof object]).forEach(style => group.append(specificStyleToHTML(style, styles[section as keyof object][style as keyof object])));
     return group;
 }

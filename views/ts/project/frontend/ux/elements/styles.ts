@@ -122,4 +122,16 @@ interface stylesheet_data {
     unit?: string[]
 }
 
-export { stylesheet, stylesheet_data };
+function stylesheetToPlain(stylesheet: { [x: string]: { [x: string]: stylesheet_data; }; }) {
+    let obj: any = {};
+    let categories = Object.keys(stylesheet);
+    categories.forEach(category => {
+        let styles = Object.keys(stylesheet[category]);
+        styles.forEach(style => {
+            obj[style] = stylesheet[category][style];
+        });
+    });
+    return obj;
+}
+
+export { stylesheet, stylesheet_data, stylesheetToPlain };

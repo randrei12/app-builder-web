@@ -1,7 +1,7 @@
 import './ux/leftSeparator';
 import { stylesToHTML, switchTab, changeTab } from './ux/rightInter'
 import { specialTypes, element_template } from './ux/elements/types';
-import { stylesheet } from './ux/elements/styles';
+import { stylesheet, stylesheetToPlain } from './ux/elements/styles';
 
 const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
 
@@ -55,6 +55,9 @@ interface DroppedElement {
 class DroppedElement {
     constructor() {
         let element: HTMLElement;
+        let elementAllStyles = {};
+        let rightInterSection = [];
+        
 
         this.generateElement = parent => {
             element = document.createElement(specialTypes[this.type as keyof object] || this.type);
@@ -63,15 +66,61 @@ class DroppedElement {
             return element;
         }
 
+        this.styles = {
+            add: styles => {
+                Object.assign(this.styles, styles);
+                let properties = Object.keys(styles);
+                properties.forEach(property => {
+                    element.style[property as keyof object] = styles[property];
+                });
+            },
+            remove: styles => {
+                styles.forEach(style => {
+                    element.style[style] = '';
+                    delete this.styles[style];
+                });
+            }
+        }
+
+        this.remove = () => {
+            if (this.type === 'screen') return;
+            Object.keys(this).forEach(key => delete this[key as keyof object]);
+            this.children.forEach(child => child.remove());
+        }
+
+        this.createInputs = () => {
+            // rightInterSection = 
+            // let sections = Object.keys(elementAllStyles);
+            // sections.forEach(section => {
+            //     let styles = Object.keys(elementAllStyles[section as keyof object]);
+            //     styles.forEach(style => {
+
+            //     });
+            // });
+            // log html shit
+            // console.log(st);
+        }
+
         this.buildFromObject = ({ name, type, children = [], styles = {}, text, src, id }) => {
             this.id = id || type + (screenElements.filter(e => e.type === type).length + 1);
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
             this.children = children.map(child => new DroppedElement().buildFromObject(child));
-            this.styles = {...styles};
+            this.styles = {...stylesheetToPlain(stylesheet.global), ...stylesheetToPlain(stylesheet[this.type as keyof object] || {})};
+            elementAllStyles = {...stylesheet.global, ...stylesheet[this.type as keyof object] as object};
             this.text = text || this.name;
             if (src) this.src = src;
             return this;
+        }
+
+        this.focus = () => {
+            topInfoTitle.onclick = () => {
+                topInfoInput.removeAttribute('style');
+                topInfoInput.value = topInfoTitle.innerText;
+                topInfoTitle.style.display = 'none';
+            }
+            deleteButton.onclick = () => this.remove();
+            element.classList.add('clicked');
         }
     }
 }
