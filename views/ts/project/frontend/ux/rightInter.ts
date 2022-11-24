@@ -32,7 +32,8 @@ function specificStyleToHTML(section: string, data: stylesheet_data, inputs: { [
     return sect;
 }
 
-function switchTab(index: number) { //changes the active tab button
+function switchTab(index: number) {
+    //changes the active tab button
     const otherElemIndex = (index + 1) % 2;
     rightStylesGroup[otherElemIndex].classList.remove('active');
     rightStylesGroup[index].classList.add('active');

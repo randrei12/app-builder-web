@@ -1,7 +1,8 @@
 import './ux/leftSeparator';
+import * as _ from 'lodash';
 import { stylesToHTML, switchTab, changeTab } from './ux/rightInter'
 import { specialTypes, element_template } from './ux/elements/types';
-import { stylesheet, stylesheetToPlain } from './ux/elements/styles';
+import { stylesheet, stylesheet_data, stylesheetToPlain } from './ux/elements/styles';
 
 const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
 
@@ -46,9 +47,9 @@ interface DroppedElement {
     type: string;
     name: string;
     children: DroppedElement[];
-    styles: { [key: string]: string },
+    styles: { [key: string]: stylesheet_data },
     style: {
-        add: (styles: object) => void,
+        add: (styles: { [key: string]: stylesheet_data}) => void,
         remove: (styles: String[]) => void
     },
     text: string,
@@ -80,8 +81,8 @@ class DroppedElement {
                 Object.assign(this.styles, styles);
                 let properties = Object.keys(styles);
                 properties.forEach(property => {
-                    inputs[property].value = styles[property as keyof object];
-                    element.style[property as keyof object] = styles[property as keyof object];
+                    // inputs[property].value = styles[property as keyof object].value;
+                    element.style[property as keyof object] = styles[property as keyof object].value;
                 });
             },
             remove: styles => {
@@ -99,26 +100,22 @@ class DroppedElement {
         }
 
         this.createInputs = () => {
-            // rightSections = 
-            console.log(elementAllStyles);
-            
             let sections = Object.keys(elementAllStyles);
             sections.forEach(section => {
                 rightGroups.push(stylesToHTML(section, elementAllStyles[section as keyof object], inputs));
-                
-                // let styles = Object.keys(elementAllStyles[section as keyof object]);
-                // styles.forEach(style => {
-
-                // });
             });
-            console.log(inputs);
-            console.log(rightGroups);
-            
+            let inputsAsArray = Object.keys(inputs);
+            inputsAsArray.forEach(prop => {
+                let input = inputs[prop as keyof object];
+                input.oninput = () => {
+                    let updatedStyles = {...this.styles[prop as keyof object], value: input.value};
+                    this.style.add({[prop]: updatedStyles})
+                }
+            });
         }
         
         this.applyStyles = () => {
-            //*i have to make this work
-            console.log({styles: this.styles});
+            //! to decide it's removal
             this.style.add(this.styles);
         }
 
@@ -127,10 +124,8 @@ class DroppedElement {
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
             this.children = children.map(child => new DroppedElement().buildFromObject(child));
-            this.styles = {...stylesheetToPlain(stylesheet.global), ...stylesheetToPlain(stylesheet[this.type as keyof object] || {}), ...styles};
+            this.styles = _.merge(stylesheetToPlain(stylesheet.global), stylesheetToPlain(stylesheet[this.type as keyof object] || {}), stylesheet.defaults[this.type as keyof object] || {});
             elementAllStyles = {...stylesheet.global, ...stylesheet[this.type as keyof object] as object};
-            console.log({1: this.styles, 2: elementAllStyles});
-            
             this.text = text || this.name;
             if (src) this.src = src;
             if (elem) element = elem;
@@ -341,7 +336,7 @@ class DroppedElement {
 // }
 
 let deviceScreen: DroppedElement;
-deviceScreen = new DroppedElement().buildFromObject({type: 'text', elem: document.querySelector('.deviceScreen'), styles: {backgroundColor: 'red'}}); 
+deviceScreen = new DroppedElement().buildFromObject({type: 'screen', elem: document.querySelector('.deviceScreen'), styles: {backgroundColor: 'red'}}); 
 deviceScreen.createInputs();
 deviceScreen.applyStyles();
 deviceScreen.focus();

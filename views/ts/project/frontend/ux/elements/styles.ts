@@ -17,11 +17,6 @@ const stylesheet = {
     },
     text: {
         writing: {
-            text: {
-                value: "text",
-                kind: 'innerText',
-                type: 'default'
-            },
             fontSize: {
                 value: '16',
                 kind: 'style',
@@ -33,11 +28,6 @@ const stylesheet = {
     },
     button: {
         writing: {
-            text: {
-                value: "text",
-                kind: 'innerText',
-                type: 'default'
-            },
             fontSize: {
                 value: '16',
                 kind: 'style',
