@@ -1,10 +1,15 @@
 import { stylesheet_data } from './elements/styles'
 
+let groups: HTMLElement[][];
+let rightContent: HTMLElement;
+function setTabs(rightElem: HTMLElement, tabs: HTMLElement[][]) {
+    rightContent = rightElem;
+    groups = tabs;
+}
 
 // right inter. switch tabs (global/specific)
 const rightStylesGroup: NodeListOf<HTMLElement> = document.querySelectorAll('.nav > button');
 const underline: HTMLElement = document.querySelector('.underline');
-const changeTabEvent = new CustomEvent("changeRightInterTab", { detail: {} });
 rightStylesGroup.forEach((button, index) => button.onclick = () => switchTab(index));
 
 //
@@ -38,10 +43,7 @@ function switchTab(index: number) {
     rightStylesGroup[otherElemIndex].classList.remove('active');
     rightStylesGroup[index].classList.add('active');
     underline.style.setProperty('--active-index', index.toString());
-    Object.assign(changeTabEvent.detail, { target: index });
-    dispatchEvent(changeTabEvent);
+    if (rightContent) rightContent.replaceChildren(...groups[index]);
 }
 
-const changeTab = (element: HTMLElement, sections: HTMLElement[][], newIndex:number) => element.replaceChildren(...sections[newIndex]);
-
-export { specificStyleToHTML, stylesToHTML, changeTab, switchTab }
+export { specificStyleToHTML, stylesToHTML, setTabs, switchTab }

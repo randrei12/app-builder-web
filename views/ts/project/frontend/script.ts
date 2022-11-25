@@ -1,8 +1,9 @@
 import './ux/leftSeparator';
 import * as _ from 'lodash';
-import { stylesToHTML, switchTab, changeTab } from './ux/rightInter'
-import { specialTypes, element_template } from './ux/elements/types';
+import { stylesToHTML, switchTab, setTabs } from './ux/rightInter'
+import { specialTypes } from './ux/elements/types';
 import { stylesheet, stylesheet_data, stylesheetToPlain } from './ux/elements/styles';
+import * as e from 'express';
 
 const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
 
@@ -49,17 +50,19 @@ interface DroppedElement {
     children: DroppedElement[];
     styles: { [key: string]: stylesheet_data },
     style: {
-        add: (styles: { [key: string]: stylesheet_data}) => void,
+        set: (styles: { [key: string]: stylesheet_data}) => void,
         remove: (styles: String[]) => void
     },
     text: string,
     src?: string,
+    focused: boolean;
     buildFromObject: (obj: buildFromObject) => this,
     generateElement: (parent: HTMLElement) => HTMLElement;
     remove: () => void;
     createInputs: () => void;
     focus: () => void;
-    applyStyles: () => void;
+    unfocus: () => void;
+    getElement: () => HTMLElement;
 }
 
 class DroppedElement {
@@ -76,12 +79,14 @@ class DroppedElement {
             return element;
         }
 
+        this.getElement = () => element;
+
         this.style = {
-            add: styles => {
+            set: styles => {
                 Object.assign(this.styles, styles);
+                console.log(this.type, this.styles);
                 let properties = Object.keys(styles);
                 properties.forEach(property => {
-                    // inputs[property].value = styles[property as keyof object].value;
                     element.style[property as keyof object] = styles[property as keyof object].value;
                 });
             },
@@ -101,38 +106,49 @@ class DroppedElement {
 
         this.createInputs = () => {
             let sections = Object.keys(elementAllStyles);
+            let globalStylesSize = Object.keys(stylesheet.global).length;
             sections.forEach(section => {
                 rightGroups.push(stylesToHTML(section, elementAllStyles[section as keyof object], inputs));
             });
+            setTabs(rightContent, _.chunk(rightGroups, globalStylesSize));
+            switchTab(0);
             let inputsAsArray = Object.keys(inputs);
             inputsAsArray.forEach(prop => {
                 let input = inputs[prop as keyof object];
                 input.oninput = () => {
-                    let updatedStyles = {...this.styles[prop as keyof object], value: input.value};
-                    this.style.add({[prop]: updatedStyles})
+                    this.styles[prop as keyof object].value = input.value;
+                    this.style.set({[prop]: this.styles[prop as keyof object]})
                 }
             });
-        }
-        
-        this.applyStyles = () => {
-            //! to decide it's removal
-            this.style.add(this.styles);
         }
 
         this.buildFromObject = ({ name, type, children = [], styles = {}, text, src, id, elem }) => {
             this.id = id || type + (screenElements.filter(e => e.type === type).length + 1);
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
+            let customStyles: { [key: string]: { value: string } } = {};
+            Object.keys(styles).forEach(style => customStyles[style] = { value: styles[style]});
             this.children = children.map(child => new DroppedElement().buildFromObject(child));
-            this.styles = _.merge(stylesheetToPlain(stylesheet.global), stylesheetToPlain(stylesheet[this.type as keyof object] || {}), stylesheet.defaults[this.type as keyof object] || {});
+            this.styles = _.merge(stylesheetToPlain(stylesheet.global), stylesheetToPlain(stylesheet[this.type as keyof object] || {}), stylesheet.defaults[this.type as keyof object] || {}, customStyles); //we will merge all the styles with priority as follows: custom added styles > default styles > element styles > global styles
             elementAllStyles = {...stylesheet.global, ...stylesheet[this.type as keyof object] as object};
             this.text = text || this.name;
             if (src) this.src = src;
-            if (elem) element = elem;
+            element = elem ? elem : this.generateElement(deviceScreen.getElement());
+            this.style.set(this.styles);
+            this.createInputs();
             return this;
         }
 
+        this.unfocus = () => {
+            this.focused = false;
+            element.classList.remove('clicked');
+        }
+
         this.focus = () => {
+            console.log(screenElements.filter(e => e.focused));
+            screenElements.filter(e => e.focused).forEach(e => e.focus());
+            this.focused = true;
+            
             topInfoTitle.onclick = () => {
                 topInfoInput.removeAttribute('style');
                 topInfoInput.value = topInfoTitle.innerText;
@@ -140,8 +156,10 @@ class DroppedElement {
             }
             deleteButton.onclick = () => this.remove();
             element.classList.add('clicked');
-            rightContent.append(...rightGroups);
         }
+
+
+
     }
 }
 
@@ -336,15 +354,17 @@ class DroppedElement {
 // }
 
 let deviceScreen: DroppedElement;
-deviceScreen = new DroppedElement().buildFromObject({type: 'screen', elem: document.querySelector('.deviceScreen'), styles: {backgroundColor: 'red'}}); 
-deviceScreen.createInputs();
-deviceScreen.applyStyles();
+deviceScreen = new DroppedElement().buildFromObject({type: 'screen', elem: document.querySelector('.deviceScreen'), styles: {backgroundColor: 'green'}}); 
+// deviceScreen.createInputs();
+screenElements.push(deviceScreen);
 deviceScreen.focus();
 
 declare global {
     interface Window { deviceScreen: DroppedElement }
 }
 window.deviceScreen = deviceScreen;
+
+
 // let data;
 // (async () => {
 //     let res = await fetch('/getProjectDesign', {
@@ -371,24 +391,29 @@ window.deviceScreen = deviceScreen;
 //     screenElements.push(deviceScreen);
 //     setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })), 0);
     
-//     buttons.forEach(button => {
-//         button.addEventListener('click', () => {
-//             let elemType = button.dataset.type;
-//             const elem: DroppedElement = new DroppedElement({
-//                 type: elemType,
-//                 id: elemType + screenElements.map(elem => elem.type === elemType).length
-//             });
-//             elem.generateElement(deviceScreen.getHtml());
-//             screenElements.push(elem);
-//             dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
-//             deviceScreen.children.add(elem);
-//             elem.parent = deviceScreen;
-//             screenElements.forEach(elem => elem.unfocus());
-//             elem.focus();
-//             console.log(screenElements);
-//             updateDB();
-//         });
-//     });
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            let elemType = button.dataset.type;
+            const elem = new DroppedElement().buildFromObject({ type: elemType });
+            screenElements.push(elem);
+            console.log(screenElements);
+            
+            elem.focus();
+            // const elem: DroppedElement = new DroppedElement({
+            //     type: elemType,
+            //     id: elemType + screenElements.map(elem => elem.type === elemType).length
+            // });
+            // elem.generateElement(deviceScreen.getHtml());
+            // screenElements.push(elem);
+            // dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
+            // deviceScreen.children.add(elem);
+            // elem.parent = deviceScreen;
+            // screenElements.forEach(elem => elem.unfocus());
+            // elem.focus();
+            // console.log(screenElements);
+            // updateDB();
+        });
+    });
     
 //     window.onclick = e => {
 //         const path = e.composedPath();
