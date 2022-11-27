@@ -17,6 +17,11 @@ const stylesheet = {
     },
     text: {
         writing: {
+            text: {
+                value: '',
+                kind: 'innerText',
+                type: 'default',
+            },
             fontSize: {
                 value: '16',
                 kind: 'style',
@@ -28,6 +33,11 @@ const stylesheet = {
     },
     button: {
         writing: {
+            text: {
+                value: '',
+                kind: 'innerText',
+                type: 'default',
+            },
             fontSize: {
                 value: '16',
                 kind: 'style',
@@ -49,7 +59,7 @@ const stylesheet = {
                 type: 'unit',
                 unit: ['px', '%', 'em']
             },
-        }
+        },
     },
     image: {
         image: {
@@ -85,6 +95,15 @@ const stylesheet = {
             },
             border: {
                 value: '1px solid black'
+            },
+            width: {
+                value: '70px'
+            },
+            height: {
+                value: '30px'
+            },
+            fontSize: {
+                value: '16px'
             }
         },
         screen: {
