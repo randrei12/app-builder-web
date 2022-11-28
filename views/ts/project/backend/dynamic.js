@@ -14,9 +14,7 @@ function updateCategories({xml, elements, workspace, js, htmlConverter}) {
         category.setAttribute('colour', '#A8A8A8');
         copy_xml.appendChild(category);
     });
-    console.log(copy_xml);
     workspace.updateToolbox(copy_xml);
-
 }
 
 function updateElementsDropdown({Blockly, workspace, elements}) {

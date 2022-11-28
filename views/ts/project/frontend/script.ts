@@ -122,6 +122,7 @@ class DroppedElement {
 
         this.remove = (topOfTree = true) => {
             if (this.type === 'screen') return;
+            screenElements.splice(screenElements.indexOf(this), 1);
             children.forEach(child => child.remove(false));
             Object.keys(this).forEach(key => delete this[key as keyof object]);
             element.remove();
