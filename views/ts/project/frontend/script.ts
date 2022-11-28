@@ -61,7 +61,7 @@ interface DroppedElement {
     focused: boolean;
     buildFromObject: (obj: buildFromObject) => this,
     generateElement: (parent: HTMLElement) => HTMLElement;
-    remove: () => void;
+    remove: (topOfTree?: boolean) => void;
     createInputs: () => void;
     focus: () => void;
     unfocus: () => void;
@@ -120,12 +120,13 @@ class DroppedElement {
             }
         }
 
-        this.remove = () => {
+        this.remove = (topOfTree = true) => {
             if (this.type === 'screen') return;
-            children.forEach(child => child.remove());
+            children.forEach(child => child.remove(false));
             Object.keys(this).forEach(key => delete this[key as keyof object]);
             element.remove();
             Object.keys(inputs).forEach(input => inputs[input].remove());
+            if (topOfTree) dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
             screenElements[0].focus();
         }
 
@@ -413,10 +414,12 @@ class DroppedElement {
 // }
 
 let deviceScreen: DroppedElement;
-deviceScreen = new DroppedElement().buildFromObject({type: 'screen', elem: document.querySelector('.deviceScreen'), styles: {backgroundColor: 'green'}}); 
+deviceScreen = new DroppedElement().buildFromObject({ type: 'screen', elem: document.querySelector('.deviceScreen') }); 
 // deviceScreen.createInputs();
 screenElements.push(deviceScreen);
 deviceScreen.focus();
+
+setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })))
 
 declare global {
     interface Window { deviceScreen: DroppedElement }
@@ -457,15 +460,14 @@ window.deviceScreen = deviceScreen;
             screenElements.push(elem);
             deviceScreen.children.add(elem);
             console.log(screenElements);
-            
             elem.focus();
+            dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
             // const elem: DroppedElement = new DroppedElement({
             //     type: elemType,
             //     id: elemType + screenElements.map(elem => elem.type === elemType).length
             // });
             // elem.generateElement(deviceScreen.getHtml());
             // screenElements.push(elem);
-            // dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
             // deviceScreen.children.add(elem);
             // elem.parent = deviceScreen;
             // screenElements.forEach(elem => elem.unfocus());

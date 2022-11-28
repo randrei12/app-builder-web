@@ -7,7 +7,7 @@ interface HTMLConverter {
 }
 
 function droppedToElem(elem: any) {
-    let html = elem.getHtml();
+    let html = elem.getElement();
     let clone = html.cloneNode();
     clone.setAttribute('src', html.getAttribute('src') || '');
     if (!['screen', 'div'].includes(elem.type)) clone.innerText = html.innerText;

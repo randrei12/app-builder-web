@@ -8,13 +8,15 @@ function updateCategories({xml, elements, workspace, js, htmlConverter}) {
         js.nodes.push(element.id);
         let category = document.createElement('category');
         category.innerHTML = `
-        <block type="element_on_click"><field name="ELEMENT">${element.name}</field></block>
-        <block type="element_on_load"><field name="ELEMENT">${element.name}</field></block>`;
+        <block type="element_on_click"><field name="ELEMENT">${element.id}</field></block>
+        <block type="element_on_load"><field name="ELEMENT">${element.id}</field></block>`; 
         category.setAttribute('name', element.name);
         category.setAttribute('colour', '#A8A8A8');
         copy_xml.appendChild(category);
     });
+    console.log(copy_xml);
     workspace.updateToolbox(copy_xml);
+
 }
 
 function updateElementsDropdown({Blockly, workspace, elements}) {
@@ -26,6 +28,7 @@ function updateElementsDropdown({Blockly, workspace, elements}) {
         let dropdown = new Blockly.FieldDropdown(options);
         this.inputList[0].removeField('ELEMENT');
         this.inputList[0].insertFieldAt(1, dropdown, 'ELEMENT');
+        console.log(this.inputList[0]);
     });
 }
 

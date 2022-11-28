@@ -37,18 +37,18 @@ workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnecte
 workspace.addChangeListener(saveBlocksState); //activate save blocks state listener
 
 //load blocks from database
-fetch('/getProjectCode', {
-    method: 'POST',
-    body: JSON.stringify({
-        id
-    }),
-    headers: {'Content-Type': 'application/json'},
-}).then(res => {
-    if (res.status === 200) res.json().then(data => {
-        if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
-    }); 
-    else location.href = '/';
-});
+// fetch('/getProjectCode', {
+//     method: 'POST',
+//     body: JSON.stringify({
+//         id
+//     }),
+//     headers: {'Content-Type': 'application/json'},
+// }).then(res => {
+//     if (res.status === 200) res.json().then(data => {
+//         if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
+//     }); 
+//     else location.href = '/';
+// });
 
 
 //* for debbuging
