@@ -1,10 +1,12 @@
 import './ux/leftSeparator';
 import * as _ from 'lodash';
+import io from 'socket.io-client';
 import { stylesToHTML, switchTab, setTabs } from './ux/rightInter'
 import { specialTypes } from './ux/elements/types';
 import { stylesheet, stylesheet_data, stylesheetToPlain } from './ux/elements/styles';
 
 const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
+const socket = io('http://localhost:2219');
 
 const topInfoTitle: HTMLElement = document.querySelector('.topInfo > span');
 const topInfoInput: HTMLInputElement = document.querySelector('.topInfo > input');
@@ -413,42 +415,35 @@ class DroppedElement {
 //     }
 
 // }
+declare global {
+    interface Window { deviceScreen: DroppedElement, Swal: any }
+}
+const Swal = window.Swal;
 
 let deviceScreen: DroppedElement;
-deviceScreen = new DroppedElement().buildFromObject({ type: 'screen', elem: document.querySelector('.deviceScreen') }); 
-// deviceScreen.createInputs();
-screenElements.push(deviceScreen);
-deviceScreen.focus();
-
-setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })))
-
-declare global {
-    interface Window { deviceScreen: DroppedElement }
-}
 window.deviceScreen = deviceScreen;
 
+let data;
+(async () => {
+    Swal.showLoading();
+    let res = await fetch('/getProjectDesign', {
+        method: 'POST',
+        body: JSON.stringify({ id }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+    data = await res.json() || {};    
+    console.log(data);
+    Swal.close();
 
-// let data;
-// (async () => {
-//     let res = await fetch('/getProjectDesign', {
-//         method: 'POST',
-//         body: JSON.stringify({ id }),
-//         headers: { 'Content-Type': 'application/json' }
-//     });
-//     data = await res.json() || {};
-    
-//     if (data) {
-//         deviceScreen = new DroppedElement({ from: data });
-//         //we have to focus each element then unfocus so the saved styles of elements are applied
-//         screenElements.forEach(e => {
-//             e.focus()
-//             e.unfocus();
-//         });
-//     } else {
-//         deviceScreen = new DroppedElement({ type: 'screen', id: 'screen1', prebuild: document.querySelector('.deviceScreen') });
-//         updateDB();
-//     }
-    
+    if (Object.keys(data).length) {
+        deviceScreen = new DroppedElement().buildFromObject(data);
+    } else {
+        deviceScreen = new DroppedElement().buildFromObject({ type: 'screen', elem: document.querySelector('.deviceScreen') });
+    }
+    deviceScreen.focus();
+    screenElements.push(deviceScreen);
+    setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })));
+    Swal
 //     deviceScreen.focus();
     
 //     screenElements.push(deviceScreen);
@@ -477,7 +472,7 @@ window.deviceScreen = deviceScreen;
             // updateDB();
         });
     });
-    
+})();
 //     window.onclick = e => {
 //         const path = e.composedPath();
 //         if (!path.includes(deviceScreen.getHtml())) return;
