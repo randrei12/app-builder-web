@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const { Server } = require('socket.io');
+const _ = require('lodash');
+const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
 const bodyParser = require('body-parser');
@@ -12,7 +13,7 @@ const { ObjectId } = mongoose.Types; //getting ObjectId for searching by id
 
 const io = new Server(2219, {
     cors: {
-        origin: `http://localhost:${process.env.PORT}`,
+        origin: ['http://localhost', `http://localhost:${process.env.PORT}`],
     }
 });
 
@@ -87,8 +88,16 @@ app.listen(process.env.PORT, () => {
 
 io.on('connection', socket => {
     console.log(`A new user has connected (${socket.id})`);
-    socket.on('updateDesign', () => {
-        
+    socket.on('updateDesign', data => {
+        try {
+            data = Array.from(data) || false;
+            console.log(data);
+            if (data && _.isEqual(Object.keys(data), ['name', 'type', 'styles', 'text', 'id', 'childs'])) {
+                console.log(data);
+            } else console.log('herror')
+        } catch (e) {
+            console.log(e);
+        }
     });
 
     socket.on('updateCode', () => {
