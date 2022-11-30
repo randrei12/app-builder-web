@@ -31,6 +31,7 @@ interface buildFromObject {
     src?: string,
     id?: string,
     elem?: HTMLElement,
+    parent?: DroppedElement;
 }
 
 interface DroppedElement {
@@ -50,6 +51,7 @@ interface DroppedElement {
     text: string,
     src?: string,
     focused: boolean;
+    parent: DroppedElement;
     buildFromObject: (obj: buildFromObject) => this,
     generateElement: (parent: HTMLElement) => HTMLElement;
     remove: (topOfTree?: boolean) => void;
@@ -84,6 +86,8 @@ class DroppedElement {
 
         this.style = {
             set: styles => {
+                console.log(styles);
+                
                 Object.assign(this.styles, styles);
                 let properties = Object.keys(styles);
                 properties.forEach(property => {
@@ -93,10 +97,10 @@ class DroppedElement {
                             element.style[property as keyof object] = styles[property as keyof object].value;
                             break;
                         case 'src':
-                            element.src = style.value;
+                            this.src = element.src = style.value;
                             break;
                         case 'innerText':
-                            element.innerText = style.value;
+                            this.text = element.innerText = style.value;
                             break;
 
                     }                    
@@ -139,25 +143,31 @@ class DroppedElement {
             });
         }
 
-        this.buildFromObject = ({ name, type, childs = [], styles = {}, text, src, id, elem }) => {
+        this.buildFromObject = ({ name, type, childs = [], styles = {}, text, src, id, parent }) => {
+            // console.log({styles});
+            
             this.id = id || type + (screenElements.filter(e => e.type === type).length + 1);
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
-            let customStyles: { [key: string]: { value: string } } = {};
-            Object.keys(styles).forEach(style => customStyles[style] = { value: styles[style]});
-            children = childs.map(child => new DroppedElement().buildFromObject(child));
-            this.styles = _.merge({}, stylesheetToPlain(stylesheet.global), stylesheetToPlain(stylesheet[this.type as keyof object] || {}), stylesheet.defaults[this.type as keyof object] || {}, customStyles); //we will merge all the styles with priority as follows: custom added styles > default styles > element styles > global styles
+
+            if (type === 'screen') element = document.querySelector('.deviceScreen');
+            else this.generateElement(parent.getElement());
+
+            children = childs.map(child => new DroppedElement().buildFromObject({ ...child, parent: this }));
+            this.styles = _.merge({}, stylesheetToPlain(stylesheet.global), stylesheetToPlain(stylesheet[this.type as keyof object] || {}), stylesheet.defaults[this.type as keyof object] || {}, styles); //we will merge all the styles with priority as follows: custom added styles > default styles > element styles > global styles            
             elementAllStyles = {...stylesheet.global, ...stylesheet[this.type as keyof object] as object};
             this.text = text || this.type;
+
             if (src) this.src = src;
-            element = elem ? elem : this.generateElement(deviceScreen.getElement());
             element.onclick = e => {
                 if (e.composedPath()[0] === element)
                     this.focus();
             }
+            
             this.style.set(this.styles);
             this.createInputs();
             if (this.styles.text) this.style.set({text: { value: this.text, kind: 'innerText', type: 'default'}});
+            screenElements.push(this);
             dispatchEvent(new CustomEvent('updateDesignCode'));
             return this;
         }
@@ -206,6 +216,7 @@ class DroppedElement {
 
         this.export = () => {
             let childs = children.map(e => e.export());
+            
             return {
                 name: this.name,
                 type: this.type,
@@ -229,36 +240,38 @@ let data;
         headers: { 'Content-Type': 'application/json' }
     });
     data = await res.json() || {};    
-    console.log(data);
+    // console.log(data);
     Swal.close();
 
     if (Object.keys(data).length) {
         deviceScreen = new DroppedElement().buildFromObject(data);
     } else {
-        deviceScreen = new DroppedElement().buildFromObject({ type: 'screen', elem: document.querySelector('.deviceScreen') });
+        deviceScreen = new DroppedElement().buildFromObject({ type: 'screen' });
     }
     deviceScreen.focus();
-    screenElements.push(deviceScreen);
     setTimeout(() => dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements })));
     
     buttons.forEach(button => {
         button.addEventListener('click', () => {
             let elemType = button.dataset.type;
-            const elem = new DroppedElement().buildFromObject({ type: elemType });
-            screenElements.push(elem);
+            const elem = new DroppedElement().buildFromObject({ type: elemType, parent: deviceScreen });
             deviceScreen.children.add(elem);
             console.log(screenElements);
             elem.focus();
             dispatchEvent(new CustomEvent('elementsChange', { detail: screenElements }));
         });
     });
+
+    //for test purposes
+    window.deviceScreen = deviceScreen;
+    window.socket = socket;
 })();
 
 let countdown: NodeJS.Timeout;
 addEventListener('updateDesignCode', () => {
     clearTimeout(countdown);
     countdown = setTimeout(() => {
-        socket.emit('updateDesign', deviceScreen.export());
+        socket.emit('updateDesign', { id, target: deviceScreen.export() });
     }, 2000);
 });
 
@@ -266,6 +279,3 @@ addEventListener('updateDesignCode', () => {
 declare global {
     interface Window { deviceScreen: DroppedElement, socket: any }
 }
-
-window.deviceScreen = deviceScreen;
-window.socket = socket;

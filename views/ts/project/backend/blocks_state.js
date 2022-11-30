@@ -1,4 +1,8 @@
 import Blockly from 'blockly';
+import io from 'socket.io-client';
+import * as PROJECT from '../projectVars';
+
+const socket = io('http://localhost:2219');
 
 // this is the function that records user's actions and save the workspace in cloud;
 
@@ -14,18 +18,15 @@ export default function saveBlocksState(event) {
     if (event.isUiEvent) return; //ignore ui events
     // if ([Blockly.Events.FINISHED_LOADING].includes(event.type)) return; //these are the event types that we want to ignore
     let currentTime = new Date().getTime();
-    if (currentTime - lastTime < 10) return;
+    if (currentTime - lastTime < 1000) return;
     let newCode = JSON.stringify(Blockly.serialization.workspaces.save(Blockly.getMainWorkspace()));
     if (newCode === lastCode) return;
     lastTime = currentTime;
     lastCode = newCode;
-    fetch('/updateProjectCode/blocks', {
-        method: 'POST',
-        body: JSON.stringify({
-            code: newCode,
-            id: window.project.id //this is set on script.js
-        }),
-        headers: { 'Content-Type': 'application/json' }
+
+    socket.emit('updateCode', { 
+        code: newCode,
+        id: PROJECT.ID
     });
 
     //! debbuging

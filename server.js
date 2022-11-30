@@ -87,24 +87,26 @@ app.listen(process.env.PORT, () => {
 });
 
 io.on('connection', socket => {
-    console.log(`A new user has connected (${socket.id})`);
-    socket.on('updateDesign', data => {
+    socket.on('updateDesign', async data => {
         try {
-            data = Array.from(data) || false;
-            console.log(data);
-            if (data && _.isEqual(Object.keys(data), ['name', 'type', 'styles', 'text', 'id', 'childs'])) {
-                console.log(data);
-            } else console.log('herror')
-        } catch (e) {
-            console.log(e);
-        }
+            let id = data.id;
+            let target = data.target
+            if (!target || !id) throw new Error();
+            if (typeof id !== 'string' || typeof target !== 'object') throw new Error();
+            if (!_.isEqual(Object.keys(target), ['name', 'type', 'styles', 'text', 'id', 'childs'])) throw new Error();
+            
+            let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.design': JSON.stringify(target) } });
+            if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
+        } catch {};
     });
 
-    socket.on('updateCode', () => {
+    socket.on('updateCode', async data => {
+        try {
+            if (typeof data.id !== 'string') throw new Error();
+            JSON.parse(data.code);
 
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`A user has disconnected (${socket.id})`);
+            let resp = await db.collection('projects').updateOne({ _id: ObjectId(data.id) }, { $set: { 'data.blocks': data.code } });
+        } catch {};
+        console.log(data);
     });
 });

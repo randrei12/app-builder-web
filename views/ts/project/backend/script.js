@@ -9,9 +9,8 @@ import * as codes from './blocks_code';
 Object.assign(javascriptGenerator, codes); //adding custom blocks' code to javascript generator
 import xml from './toolbox';
 import saveBlocksState from './blocks_state';
+import * as PROJECT from '../projectVars';
 import { generateError } from './utils';
-
-const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
 
 let jsCompileTemplate = {};
 const workspace = Blockly.inject('blockly', { toolbox: xml, zoom: { controls: true, wheel: true, startScale: 1, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 }, theme });
@@ -37,18 +36,18 @@ workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnecte
 workspace.addChangeListener(saveBlocksState); //activate save blocks state listener
 
 //load blocks from database
-// fetch('/getProjectCode', {
-//     method: 'POST',
-//     body: JSON.stringify({
-//         id
-//     }),
-//     headers: {'Content-Type': 'application/json'},
-// }).then(res => {
-//     if (res.status === 200) res.json().then(data => {
-//         if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
-//     }); 
-//     else location.href = '/';
-// });
+fetch('/getProjectCode', {
+    method: 'POST',
+    body: JSON.stringify({
+        id: PROJECT.ID
+    }),
+    headers: {'Content-Type': 'application/json'},
+}).then(res => {
+    if (res.status === 200) res.json().then(data => {
+        if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
+    }); 
+    else location.href = '/';
+});
 
 
 //* for debbuging

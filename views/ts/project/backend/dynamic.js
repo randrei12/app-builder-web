@@ -26,7 +26,6 @@ function updateElementsDropdown({Blockly, workspace, elements}) {
         let dropdown = new Blockly.FieldDropdown(options);
         this.inputList[0].removeField('ELEMENT');
         this.inputList[0].insertFieldAt(1, dropdown, 'ELEMENT');
-        console.log(this.inputList[0]);
     });
 }
 
