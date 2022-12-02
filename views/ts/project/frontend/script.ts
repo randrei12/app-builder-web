@@ -1,12 +1,11 @@
 import './ux/leftSeparator';
 import * as _ from 'lodash';
-import io from 'socket.io-client';
+import socket from '../../socket';
 import { stylesToHTML, switchTab, setTabs } from './ux/rightInter'
 import { specialTypes } from './ux/elements/types';
 import { stylesheet, stylesheet_data, stylesheetToPlain } from './ux/elements/styles';
 
 const id = location.href.substring(location.href.indexOf('projects/') + 9, location.href.lastIndexOf('/'));
-const socket = io('http://localhost:2219');
 
 const topInfoTitle: HTMLElement = document.querySelector('.topInfo > span');
 const topInfoInput: HTMLInputElement = document.querySelector('.topInfo > input');
@@ -16,10 +15,10 @@ const buttons: NodeListOf<HTMLElement> = document.querySelectorAll('.elementsPan
 const screenElements: DroppedElement[] = [];
 
 declare global {
-    interface Window { Swal: any }
     interface HTMLElement {
         src: string;
     }
+    
 }
 
 interface buildFromObject {
@@ -62,11 +61,6 @@ interface DroppedElement {
     export: () => { name: string; type: string; styles: { [key: string]: stylesheet_data; }; text: string; src: string; id: string; childs: any[]; };
 }
 
-declare global {
-
-}
-const Swal = window.Swal;
-
 class DroppedElement {
     constructor() {
         let element: HTMLElement;
@@ -86,8 +80,6 @@ class DroppedElement {
 
         this.style = {
             set: styles => {
-                console.log(styles);
-                
                 Object.assign(this.styles, styles);
                 let properties = Object.keys(styles);
                 properties.forEach(property => {
@@ -144,19 +136,18 @@ class DroppedElement {
         }
 
         this.buildFromObject = ({ name, type, childs = [], styles = {}, text, src, id, parent }) => {
-            // console.log({styles});
-            
+            screenElements.push(this);
+
             this.id = id || type + (screenElements.filter(e => e.type === type).length + 1);
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
-
+            
             if (type === 'screen') element = document.querySelector('.deviceScreen');
             else this.generateElement(parent.getElement());
-
+            
             children = childs.map(child => new DroppedElement().buildFromObject({ ...child, parent: this }));
             this.styles = _.merge({}, stylesheetToPlain(stylesheet.global), stylesheetToPlain(stylesheet[this.type as keyof object] || {}), stylesheet.defaults[this.type as keyof object] || {}, styles); //we will merge all the styles with priority as follows: custom added styles > default styles > element styles > global styles            
             elementAllStyles = {...stylesheet.global, ...stylesheet[this.type as keyof object] as object};
-            this.text = text || this.type;
 
             if (src) this.src = src;
             element.onclick = e => {
@@ -166,8 +157,7 @@ class DroppedElement {
             
             this.style.set(this.styles);
             this.createInputs();
-            if (this.styles.text) this.style.set({text: { value: this.text, kind: 'innerText', type: 'default'}});
-            screenElements.push(this);
+            if (this.styles.text) this.style.set({text: { value: text || this.type, kind: 'innerText', type: 'default'}});
             dispatchEvent(new CustomEvent('updateDesignCode'));
             return this;
         }
@@ -232,17 +222,8 @@ class DroppedElement {
 
 let deviceScreen: DroppedElement;
 let data;
-(async () => {
-    Swal.showLoading();
-    let res = await fetch('/getProjectDesign', {
-        method: 'POST',
-        body: JSON.stringify({ id }),
-        headers: { 'Content-Type': 'application/json' }
-    });
-    data = await res.json() || {};    
-    // console.log(data);
-    Swal.close();
-
+addEventListener('fetchProject', (e: CustomEvent) => {
+    data = JSON.parse(e.detail.design);
     if (Object.keys(data).length) {
         deviceScreen = new DroppedElement().buildFromObject(data);
     } else {
@@ -263,9 +244,10 @@ let data;
     });
 
     //for test purposes
+    window.screenElements = screenElements;
     window.deviceScreen = deviceScreen;
     window.socket = socket;
-})();
+});
 
 let countdown: NodeJS.Timeout;
 addEventListener('updateDesignCode', () => {
@@ -277,5 +259,5 @@ addEventListener('updateDesignCode', () => {
 
 //for test purposes
 declare global {
-    interface Window { deviceScreen: DroppedElement, socket: any }
+    interface Window { deviceScreen: DroppedElement, socket: any, screenElements: DroppedElement[] }
 }

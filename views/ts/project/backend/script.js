@@ -22,8 +22,8 @@ jsConverter.setTemplate(jsCompileTemplate);
 
 addEventListener('elementsChange', e => {
     let elements = e.detail;
-    updateCategories({xml, elements, workspace, js: jsCompileTemplate, htmlConverter});
-    updateElementsDropdown({Blockly, workspace, elements});
+    updateCategories({ xml, elements, workspace, js: jsCompileTemplate, htmlConverter });
+    updateElementsDropdown({ workspace, elements });
 });
 
 convertBtn.addEventListener('click', () => {
@@ -35,20 +35,41 @@ convertBtn.addEventListener('click', () => {
 workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnected blocks
 workspace.addChangeListener(saveBlocksState); //activate save blocks state listener
 
-//load blocks from database
-fetch('/getProjectCode', {
-    method: 'POST',
-    body: JSON.stringify({
-        id: PROJECT.ID
-    }),
-    headers: {'Content-Type': 'application/json'},
-}).then(res => {
-    if (res.status === 200) res.json().then(data => {
-        if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
-    }); 
-    else location.href = '/';
+addEventListener('fetchProject', e => {
+    let data = JSON.parse(e.detail.blocks);
+    console.log(data);
+    if (data) {
+        Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
+        setTimeout(() => { //make sure to wait for workspace to load retrived data
+            //set the saved value to each block
+            data.blocks.blocks.forEach(block => {
+                switch (block.type) {
+                    case "element_on_click":
+                        workspace.getBlockById(block.id).setFieldValue(block.fields.ELEMENT, 'ELEMENT');
+                        break;
+                }
+                
+            });
+        }, 10)
+
+    }
 });
 
+
+//load blocks from database
+// fetch('/getProjectCode', {
+//     method: 'POST',
+//     body: JSON.stringify({
+//         id: PROJECT.ID
+//     }),
+//     headers: {'Content-Type': 'application/json'},
+// }).then(res => {
+//     if (res.status === 200) res.json().then(data => {
+//         console.log('got', data);
+//         if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
+//     }); 
+//     // else location.href = '/';
+// });
 
 //* for debbuging
 window.JS = javascriptGenerator;

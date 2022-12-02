@@ -1,4 +1,8 @@
+import Blockly from 'blockly';
+import * as PROJECT from '../projectVars';
+
 const BLOCKS_TYPES = ['element_on_click'];
+Blockly.Extensions.register('set_elements', () => {});
 
 function updateCategories({xml, elements, workspace, js, htmlConverter}) {
     js.nodes = [];
@@ -17,8 +21,9 @@ function updateCategories({xml, elements, workspace, js, htmlConverter}) {
     workspace.updateToolbox(copy_xml);
 }
 
-function updateElementsDropdown({Blockly, workspace, elements}) {
+function updateElementsDropdown({ workspace, elements }) {
     let options = elements.map(elem => [elem.name, elem.id]);
+    PROJECT.updateELements(options);
     let workspaceBlocks = BLOCKS_TYPES.map(type => workspace.getBlocksByType(type)).flat(1);
     workspaceBlocks.forEach(block => block.getField('ELEMENT').menuGenerator_ = options);
     Blockly.Extensions.unregister('set_elements');

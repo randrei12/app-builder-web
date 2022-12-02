@@ -62,21 +62,11 @@ app.post('/newProject', async (req, res) => {
     }
 });
 
-app.post('/getProjectDesign', async (req, res) => {
+app.post('/fetchProject', async (req, res) => {
     try {
         let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
         if (!code) throw new Error();
-        res.status(200).send(code.data.design || '{}');
-    } catch {
-        res.status(500).send('An error occured while retrieving the project data');
-    }
-});
-
-app.post('/getProjectCode', async (req, res) => {
-    try {
-        let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
-        if (!code) throw new Error();
-        res.status(200).send(code.data.blocks || '{}');
+        res.status(200).send(code.data || '{}');
     } catch {
         res.status(500).send('An error occured while retrieving the project data');
     }
@@ -104,9 +94,8 @@ io.on('connection', socket => {
         try {
             if (typeof data.id !== 'string') throw new Error();
             JSON.parse(data.code);
-
             let resp = await db.collection('projects').updateOne({ _id: ObjectId(data.id) }, { $set: { 'data.blocks': data.code } });
+            if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
         } catch {};
-        console.log(data);
     });
 });
