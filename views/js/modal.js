@@ -116,13 +116,13 @@ async function newProject([title, platformsObj]) {
         }
     });
     let data = await res.text();
+    Swal.close();
     if (res.status === 201) location = `/projects/${data.substring(1, data.length - 1)}`;
     else Swal.fire({
         icon: 'error',
         title: 'Error',
         text: data,
     });
-    Swal.hideLoading();
 }
 
 export default Modal;

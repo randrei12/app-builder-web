@@ -4,12 +4,8 @@ const specialTypes = {
     image: 'img',
 }
 
-interface element_template {
-    type?: string;
-    id?: string;
-    prebuild?: HTMLElement;
-    name?: string;
-    from?: any;
+const styleTypes = {
+
 }
 
-export { specialTypes, element_template };
+export { specialTypes, styleTypes };

@@ -1,5 +1,8 @@
 import './frontend/script';
 import './backend/script';
+import './middleware/fetchProject';
+
+// import Blockly from 'blockly';
 const Blockly = require('blockly');
 
 const types = ['design', 'blocks'];

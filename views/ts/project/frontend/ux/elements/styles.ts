@@ -18,9 +18,9 @@ const stylesheet = {
     text: {
         writing: {
             text: {
-                value: "text",
+                value: '',
                 kind: 'innerText',
-                type: 'default'
+                type: 'default',
             },
             fontSize: {
                 value: '16',
@@ -34,9 +34,9 @@ const stylesheet = {
     button: {
         writing: {
             text: {
-                value: "text",
+                value: '',
                 kind: 'innerText',
-                type: 'default'
+                type: 'default',
             },
             fontSize: {
                 value: '16',
@@ -59,7 +59,7 @@ const stylesheet = {
                 type: 'unit',
                 unit: ['px', '%', 'em']
             },
-        }
+        },
     },
     image: {
         image: {
@@ -95,6 +95,15 @@ const stylesheet = {
             },
             border: {
                 value: '1px solid black'
+            },
+            width: {
+                value: '70px'
+            },
+            height: {
+                value: '30px'
+            },
+            fontSize: {
+                value: '16px'
             }
         },
         screen: {
@@ -122,4 +131,16 @@ interface stylesheet_data {
     unit?: string[]
 }
 
-export { stylesheet, stylesheet_data };
+function stylesheetToPlain(stylesheet: { [x: string]: { [x: string]: stylesheet_data; }; }) {
+    let obj: any = {};
+    let categories = Object.keys(stylesheet);
+    categories.forEach(category => {
+        let styles = Object.keys(stylesheet[category]);
+        styles.forEach(style => {
+            obj[style] = stylesheet[category][style];
+        });
+    });
+    return obj;
+}
+
+export { stylesheet, stylesheet_data, stylesheetToPlain };

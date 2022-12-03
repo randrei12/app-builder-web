@@ -1,14 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { Server } = require('socket.io');
+const _ = require('lodash');
 const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
 const bodyParser = require('body-parser');
 const validator = require('validator');
-
 (async () => await mongoose.connect(process.env.MONGO_URL + '/app-builder'))(); //connect to mongodb
 const db = mongoose.connection;
 const { ObjectId } = mongoose.Types; //getting ObjectId for searching by id
+
+const io = new Server(2219, {
+    cors: {
+        origin: ['http://localhost', `http://localhost:${process.env.PORT}`],
+    }
+});
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.text());
@@ -47,6 +54,7 @@ app.post('/newProject', async (req, res) => {
         if (!title || ![1, 2, 3].includes(Object.keys(platforms).length)) throw new Error();
         doc.title = validator.escape(req.body.title);
         doc.platforms = platforms;
+        doc.data = { design: {}, blocks: {} };
         let resp = await db.collection('projects').insertOne(doc);
         resp.acknowledged ? res.status(201).send(resp.insertedId) : res.status(500).send('An error occured while creating the project');
     } catch {
@@ -54,58 +62,11 @@ app.post('/newProject', async (req, res) => {
     }
 });
 
-app.post('/updateProjectCode/design', async (req, res) => {
-    let { target, id } = req.body;
-    try {
-        if (typeof target !== 'object') throw new Error();
-    } catch {
-        res.status(500).send('Malformed request data');
-    }
-
-    try {
-        let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.design': JSON.stringify(target) } });
-        if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
-    } catch {
-        return res.status(500).send('An error occured while updating the project code');
-    }
-    
-    res.status(200).send('ok');
-});
-
-app.post('/updateProjectCode/blocks', async (req, res) => {
-    let { code, id } = req.body;
-    try {
-        let obj = JSON.parse(code);
-        if (typeof obj.blocks.languageVersion !== 'number' || !Array.isArray(obj.blocks.blocks)) throw new Error();
-    } catch {
-        return res.status(500).send('Malformed request data');
-    }
-    
-    try {
-        let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.blocks': code }});
-        if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
-    } catch {
-        return res.status(500).send('An error occured while updating the project code');
-    }
-    
-    res.status(200).send('ok');
-});
-
-app.post('/getProjectDesign', async (req, res) => {
+app.post('/fetchProject', async (req, res) => {
     try {
         let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
         if (!code) throw new Error();
-        res.status(200).send(code.data.design || '{}');
-    } catch {
-        res.status(500).send('An error occured while retrieving the project data');
-    }
-});
-
-app.post('/getProjectCode', async (req, res) => {
-    try {
-        let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
-        if (!code) throw new Error();
-        res.status(200).send(code.data.blocks || '{}');
+        res.status(200).send(code.data || '{}');
     } catch {
         res.status(500).send('An error occured while retrieving the project data');
     }
@@ -113,4 +74,30 @@ app.post('/getProjectCode', async (req, res) => {
 
 app.listen(process.env.PORT, () => {
     console.log('Server started on port ' + process.env.PORT);
+});
+
+io.on('connection', socket => {
+    socket.on('updateDesign', async data => {
+        try {
+            let id = data.id;
+            let target = data.target;
+            if (!target || !id) throw new Error();
+            if (typeof id !== 'string' || typeof target !== 'object') throw new Error();
+            let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.design': JSON.stringify(target) } });
+            if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
+        } catch (e) {
+            console.log('\x1b[31mAn error occured while updating design\n', e);
+        };
+    });
+
+    socket.on('updateCode', async data => {
+        try {
+            if (typeof data.id !== 'string') throw new Error();
+            JSON.parse(data.code);
+            let resp = await db.collection('projects').updateOne({ _id: ObjectId(data.id) }, { $set: { 'data.blocks': data.code } });
+            if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
+        } catch (e) {
+            console.log('\x1b[31mAn error occured while updating code\n', e);
+        };
+    });
 });
