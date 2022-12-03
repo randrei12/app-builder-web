@@ -80,14 +80,14 @@ io.on('connection', socket => {
     socket.on('updateDesign', async data => {
         try {
             let id = data.id;
-            let target = data.target
+            let target = data.target;
             if (!target || !id) throw new Error();
             if (typeof id !== 'string' || typeof target !== 'object') throw new Error();
-            if (!_.isEqual(Object.keys(target), ['name', 'type', 'styles', 'text', 'id', 'childs'])) throw new Error();
-            
             let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.design': JSON.stringify(target) } });
             if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
-        } catch {};
+        } catch (e) {
+            console.log('\x1b[31mAn error occured while updating design\n', e);
+        };
     });
 
     socket.on('updateCode', async data => {
@@ -96,6 +96,8 @@ io.on('connection', socket => {
             JSON.parse(data.code);
             let resp = await db.collection('projects').updateOne({ _id: ObjectId(data.id) }, { $set: { 'data.blocks': data.code } });
             if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
-        } catch {};
+        } catch (e) {
+            console.log('\x1b[31mAn error occured while updating code\n', e);
+        };
     });
 });

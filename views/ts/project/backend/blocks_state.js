@@ -20,6 +20,7 @@ export default function saveBlocksState(event) {
     lastTime = currentTime;
     lastCode = newCode;
 
+    console.log('code updated');
     socket.emit('updateCode', { 
         code: newCode,
         id: PROJECT.ID

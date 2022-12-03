@@ -18,7 +18,6 @@ declare global {
     interface HTMLElement {
         src: string;
     }
-    
 }
 
 interface buildFromObject {
@@ -92,7 +91,7 @@ class DroppedElement {
                             this.src = element.src = style.value;
                             break;
                         case 'innerText':
-                            this.text = element.innerText = style.value;
+                            this.text = element.innerText = style.value;                            
                             break;
 
                     }                    
@@ -137,7 +136,6 @@ class DroppedElement {
 
         this.buildFromObject = ({ name, type, childs = [], styles = {}, text, src, id, parent }) => {
             screenElements.push(this);
-
             this.id = id || type + (screenElements.filter(e => e.type === type).length + 1);
             this.name = name || this.id.charAt(0).toUpperCase() + this.id.slice(1);
             this.type = type;
@@ -156,8 +154,8 @@ class DroppedElement {
             }
             
             this.style.set(this.styles);
+            if (this.styles.text && !text) this.style.set({text: { value: this.type, kind: 'innerText', type: 'default'}});
             this.createInputs();
-            if (this.styles.text) this.style.set({text: { value: text || this.type, kind: 'innerText', type: 'default'}});
             dispatchEvent(new CustomEvent('updateDesignCode'));
             return this;
         }
@@ -253,6 +251,7 @@ let countdown: NodeJS.Timeout;
 addEventListener('updateDesignCode', () => {
     clearTimeout(countdown);
     countdown = setTimeout(() => {
+        console.log('design updated');
         socket.emit('updateDesign', { id, target: deviceScreen.export() });
     }, 2000);
 });

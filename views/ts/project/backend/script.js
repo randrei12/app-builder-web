@@ -37,7 +37,6 @@ workspace.addChangeListener(saveBlocksState); //activate save blocks state liste
 
 addEventListener('fetchProject', e => {
     let data = JSON.parse(e.detail.blocks);
-    console.log(data);
     if (data) {
         Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
         setTimeout(() => { //make sure to wait for workspace to load retrived data
@@ -50,8 +49,7 @@ addEventListener('fetchProject', e => {
                 }
                 
             });
-        }, 10)
-
+        }, 10);
     }
 });
 
