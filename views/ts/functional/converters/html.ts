@@ -7,7 +7,7 @@ interface HTMLConverter {
 }
 
 function droppedToElem(elem: any) {
-    let html = elem.getHtml();
+    let html = elem.getElement();
     let clone = html.cloneNode();
     clone.setAttribute('src', html.getAttribute('src') || '');
     if (!['screen', 'div'].includes(elem.type)) clone.innerText = html.innerText;
@@ -23,6 +23,8 @@ class HTMLConverter {
 
         this.setTarget = param => target = param;
         this.convert = () => {
+            console.log(target);
+            
             const data = droppedToElem(target);
             const a = document.createElement('a');
             a.setAttribute('href', 'data:text/plain;charset=utf-8, ' + template + encodeURIComponent(data.outerHTML) + javascript);
