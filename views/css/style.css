@@ -330,6 +330,9 @@ body {
 
 .topZone .projectTitle {
     gap: 1px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .topZone .projectTitle h1 {
