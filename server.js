@@ -28,8 +28,16 @@ app.use('/ux', express.static('views/js'));
 
 app.get('/projects', (req, res) => {
     db.collection('projects').find({}).toArray((err, projects) => {
-        if (err) throw err;
+        if (err) return console.log(err);
         res.render('projectsList', { projects: projects.reverse() });
+    });
+});
+
+//if it's a post request we want to return same thing but as a json instead of html
+app.post('/projects', (req, res) => {
+    db.collection('projects').find({}).toArray((err, projects) => {
+        if (err) return console.log(err);
+        res.end(JSON.stringify(projects.reverse()));
     });
 });
 
