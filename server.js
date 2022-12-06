@@ -62,7 +62,7 @@ app.post('/newProject', async (req, res) => {
         if (!title || ![1, 2, 3].includes(Object.keys(platforms).length)) throw new Error();
         doc.title = validator.escape(req.body.title);
         doc.platforms = platforms;
-        doc.data = { design: {}, blocks: {} };
+        doc.data = { design: "{}", blocks: "{}" };
         let resp = await db.collection('projects').insertOne(doc);
         resp.acknowledged ? res.status(201).send(resp.insertedId) : res.status(500).send('An error occured while creating the project');
     } catch {
