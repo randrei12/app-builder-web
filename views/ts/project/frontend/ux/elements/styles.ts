@@ -6,6 +6,11 @@ const stylesheet = {
                 kind: 'style',
                 type: 'color'
             },
+            color: {
+                value: 'black',
+                kind: 'style',
+                type: 'color'
+            },
             borderRadius: {
                 value: '15',
                 kind: 'style',
@@ -13,6 +18,18 @@ const stylesheet = {
                 keyboard: 'numeric',
                 unit: ['px', '%']
             },
+            padding: {
+                value: '0',
+                kind: 'style',
+                type: 'unit',
+                keyboard: 'numeric',
+                unit: ['px', '%']
+            },
+            border: {
+                value: 'none',
+                kind: 'style',
+                type: 'default',
+            }
         }
     },
     text: {
@@ -88,22 +105,19 @@ const stylesheet = {
     defaults: {
         button: {
             backgroundColor: {
+                value: 'orange'
+            },
+            color: {
                 value: 'white'
             },
             borderRadius: {
-                value: '5px'
-            },
-            border: {
-                value: '1px solid black'
-            },
-            width: {
-                value: '70px'
-            },
-            height: {
-                value: '30px'
+                value: '15px'
             },
             fontSize: {
                 value: '16px'
+            },
+            padding: {
+                value: '5px 15px'
             }
         },
         screen: {

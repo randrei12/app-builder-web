@@ -36,8 +36,8 @@ workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnecte
 workspace.addChangeListener(saveBlocksState); //activate save blocks state listener
 
 addEventListener('fetchProject', e => {
-    let data = JSON.parse(e.detail.blocks);
-    if (data) {
+    if (e.detail.blocks !== '{}') {
+        let data = JSON.parse(e.detail.blocks);
         Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
         setTimeout(() => { //make sure to wait for workspace to load retrived data
             //set the saved value to each block
