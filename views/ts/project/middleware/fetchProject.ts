@@ -30,7 +30,11 @@ fetch('/fetchProject', {
     body: JSON.stringify({ id: ID }),
     headers: { 'Content-Type': 'application/json' }
 }).then(async res => {
+    console.log(await res.text());
+    
     let data: ProjectCode = await res.json();
-    dispatchEvent(new CustomEvent('fetchProject', { detail:data }));
+    console.log(res.json());
+    
+    // dispatchEvent(new CustomEvent('fetchProject', { detail:data }));
     window.Swal.close();
 }).catch();

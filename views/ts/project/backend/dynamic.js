@@ -4,9 +4,8 @@ import * as PROJECT from '../projectVars';
 const BLOCKS_TYPES = ['element_on_click'];
 Blockly.Extensions.register('set_elements', () => {});
 
-function updateCategories({xml, elements, workspace, js, htmlConverter}) {
+function updateCategories({xml, elements, workspace, js}) {
     js.nodes = [];
-    htmlConverter.setTarget(elements[0]);
     let copy_xml = xml.cloneNode(true);
     elements.forEach(element => {
         js.nodes.push(element.id);
