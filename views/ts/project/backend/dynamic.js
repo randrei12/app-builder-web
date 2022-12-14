@@ -4,11 +4,9 @@ import * as PROJECT from '../projectVars';
 const BLOCKS_TYPES = ['element_on_click'];
 Blockly.Extensions.register('set_elements', () => {});
 
-function updateCategories({xml, elements, workspace, js}) {
-    js.nodes = [];
+function updateCategories({ xml, elements, workspace }) {
     let copy_xml = xml.cloneNode(true);
     elements.forEach(element => {
-        js.nodes.push(element.id);
         let category = document.createElement('category');
         category.innerHTML = `
         <block type="element_on_click"><field name="ELEMENT">${element.id}</field></block>
