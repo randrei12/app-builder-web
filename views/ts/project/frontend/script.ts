@@ -221,7 +221,7 @@ class DroppedElement {
 let deviceScreen: DroppedElement;
 let data;
 addEventListener('fetchProject', (e: CustomEvent) => {
-    data = JSON.parse(e.detail.design);
+    data = JSON.parse(e.detail.data.design);
     if (Object.keys(data).length) {
         deviceScreen = new DroppedElement().buildFromObject(data);
     } else {

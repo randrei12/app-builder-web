@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { Server } = require('socket.io');
 const _ = require('lodash');
 const dotenv = require('dotenv');
+const fs = require('fs');
 dotenv.config();
 const app = express();
 const bodyParser = require('body-parser');
@@ -39,6 +40,15 @@ app.post('/projects', (req, res) => {
         if (err) return console.log(err);
         res.end(JSON.stringify(projects.reverse()));
     });
+});
+
+app.post('/xml', async (req, res) => {
+    fs.readFile('toolbox.xml', (err, xml) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send();
+        } else res.send(xml);
+    })
 });
 
 app.get('/projects/:id', (req, res) => {

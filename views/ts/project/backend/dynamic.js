@@ -4,20 +4,17 @@ import * as PROJECT from '../projectVars';
 const BLOCKS_TYPES = ['element_on_click'];
 Blockly.Extensions.register('set_elements', () => {});
 
-function updateCategories({xml, elements, workspace, js}) {
-    js.nodes = [];
-    let copy_xml = xml.cloneNode(true);
+function updateCategories({ xml, elements, workspace }) {
+    xml = xml.replace('</xml>', '');
     elements.forEach(element => {
-        js.nodes.push(element.id);
-        let category = document.createElement('category');
-        category.innerHTML = `
-        <block type="element_on_click"><field name="ELEMENT">${element.id}</field></block>
-        <block type="element_on_load"><field name="ELEMENT">${element.id}</field></block>`; 
-        category.setAttribute('name', element.name);
-        category.setAttribute('colour', '#A8A8A8');
-        copy_xml.appendChild(category);
+        xml += `
+        <category name="${element.name}" colour="#A8A8A8">
+            <block type="element_on_click"><field name="ELEMENT">${element.id}</field></block>
+            <block type="element_on_load"><field name="ELEMENT">${element.id}</field></block>
+        </category>`;
     });
-    workspace.updateToolbox(copy_xml);
+    xml += '</xml>';
+    workspace.updateToolbox(xml);
 }
 
 function updateElementsDropdown({ workspace, elements }) {

@@ -25,16 +25,32 @@ window.Swal.fire({
     }
 });
 
-fetch('/fetchProject', {
-    method: 'POST',
-    body: JSON.stringify({ id: ID }),
-    headers: { 'Content-Type': 'application/json' }
-}).then(async res => {
-    console.log(await res.text());
-    
+async function fetchProject() {
+    let res = await fetch('/fetchProject', {
+        method: 'POST',
+        body: JSON.stringify({ id: ID }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (res.status === 500) throw new Error();
     let data: ProjectCode = await res.json();
-    console.log(res.json());
+    dispatchEvent(new CustomEvent('fetchProject', { detail:data }));
+}
+
+async function fetchBlocklyToolbox() {
+    let res = await fetch('/xml', { method: 'POST' });
+    if (res.status === 500) throw new Error();
+    const xml = await res.text();
     
-    // dispatchEvent(new CustomEvent('fetchProject', { detail:data }));
-    window.Swal.close();
-}).catch();
+    dispatchEvent(new CustomEvent('fetchBlocklyToolbox', { detail: { xml } }));
+}
+
+(async () => {
+    try {
+        await fetchBlocklyToolbox();
+        await fetchProject();
+        window.Swal.close();
+    } catch {
+        document.write('An error occurred');
+    }
+
+})();

@@ -27,11 +27,11 @@ navButtons.forEach((btn, index) => {
 });
 
 function setActive(index: number): void {
-    Blockly.DropDownDiv.hide();
     navButtons[index].className = 'current';
     components[index].classList.add('active'); //setting the active class to other component
     navButtons[1 - index].className = ''; //remove current class from other button
     components[1 - index].classList.remove('active'); //remove active class from other component div
+    if (Blockly.DropDownDiv.isVisible()) Blockly.DropDownDiv.hide();
 }
 
 setActive(index);
