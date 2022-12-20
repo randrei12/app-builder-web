@@ -1,3 +1,5 @@
+//! to be removed
+
 const { javascriptGenerator } = require('blockly/javascript');
 const { generateError } = require('./utils');
 
