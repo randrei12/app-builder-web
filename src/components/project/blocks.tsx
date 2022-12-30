@@ -1,8 +1,9 @@
 import { useEffect, useContext } from 'react';
 import { Context } from 'hooks/context';
-import 'scss/components/project/blockly.scss';
+
 import Project from 'ts/interfaces/project';
 import Backend from 'ts/blockly/main';
+import 'scss/components/project/blockly.scss';
 
 export default function Blocks() {
     let { project } = useContext(Context);

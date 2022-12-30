@@ -67,7 +67,7 @@ app.post('/fetchProject', async (req, res) => {
     try {
         let code = await db.collection('projects').findOne({ _id: ObjectId(req.body.id) });
         if (!code) throw new Error();
-        res.status(200).send(code.data || '{}');
+        res.status(200).send(code || '{}');
     } catch {
         res.status(500).send('An error occured while retrieving the project data');
     }

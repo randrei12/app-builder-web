@@ -9,7 +9,8 @@ import '../scss/pages/project.scss';
 export default function Project() {
     const { project, setProject } = useContext(Context);
     const { id } = useParams();
-
+    
+    //@ts-ignore
     if (project._id !== id) {
         Swal.fire({
             title: 'Loading...',

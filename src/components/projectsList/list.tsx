@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { createProject } from 'ts/pages/projectsList/createProject';
 import '../../scss/components/projectsList/list.scss';
 
 function List() {
@@ -17,19 +18,11 @@ function List() {
         })
     }, []);
 
-    useEffect(() => {
-        if (loaded) import('../../ts/pages/projectsList/createProject')
-    }, [loaded]);
-
-    // fetch()
-    
-    
-
     return (
         <div className="projectsList">
             <>
                 { loaded ?
-                    <div className="createProject">
+                    <div className="createProject" onClick={createProject}>
                         <div>
                             <i className="fa-solid fa-plus"></i>
                         </div>

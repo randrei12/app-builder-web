@@ -2,6 +2,8 @@ import { CSSProperties } from 'react';
 import 'scss/components/project/design/rightPanel.scss';
 
 export default function RightPanel() {
+    
+
     return (
         <div className="rightElements">
             <div className="topInfo">
