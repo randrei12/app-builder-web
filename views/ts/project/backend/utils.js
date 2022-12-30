@@ -1,1 +1,0 @@
-exports.generateError = text => `throw new Error('${text}')`;
