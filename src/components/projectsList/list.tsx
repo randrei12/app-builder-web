@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { createProject } from 'ts/pages/projectsList/createProject';
 import '../../scss/components/projectsList/list.scss';
@@ -6,6 +6,7 @@ import '../../scss/components/projectsList/list.scss';
 function List() {
     let [loaded, setLoaded] = useState(false);
     let [projects, setProjects] = useState<Array<any>>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         import('../../ts/pages/projectsList/main'); // import ts after rendering
@@ -22,7 +23,7 @@ function List() {
         <div className="projectsList">
             <>
                 { loaded ?
-                    <div className="createProject" onClick={createProject}>
+                    <div className="createProject" onClick={() => createProject().then(e => e ? navigate(`${e}`) : '')}>
                         <div>
                             <i className="fa-solid fa-plus"></i>
                         </div>

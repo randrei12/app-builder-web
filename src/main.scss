@@ -30,6 +30,10 @@ body {
     background: #F8F9FB;
 }
 
+#root {
+    overflow-y: auto;
+}
+
 * {
     box-sizing: border-box;
 }

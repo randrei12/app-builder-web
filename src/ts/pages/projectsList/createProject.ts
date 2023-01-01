@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 import 'scss/components/modal/createProject.scss';
 
 function createProject() {
-    Swal.fire({
+    return Swal.fire({
         title: "Create Project",
         text: "Name",
         // inputLabel: 'Name',
@@ -23,13 +23,14 @@ function createProject() {
             autocapitalize: 'off'
         },
         showCancelButton: true,
+        showCloseButton: true,
         confirmButtonText: 'Create',
         showLoaderOnConfirm: true,
-        preConfirm: () => {
+        preConfirm: async () => {
             const input = document.querySelector('.section > input') as HTMLInputElement;
             const selectors = [...document.querySelectorAll('.selectorsDiv > .selected')] as HTMLElement[];
             let platforms = selectors.map(selector => selector.dataset.plat);
-            return fetch(`${import.meta.env.VITE_SERVER}/newProject`, {
+            let res = await fetch(`${import.meta.env.VITE_SERVER}/newProject`, {
                 method: 'POST',
                 body: JSON.stringify({
                     title: input.value,
@@ -38,10 +39,13 @@ function createProject() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-            })
+            });
+            
+            if (res.ok) return await res.text();
+            else return Swal.showValidationMessage('An error occurred while creating a new project.');
         },
         allowOutsideClick: () => !Swal.isLoading()
-    })
+    }).then(e => e.value);
 };
 
 export { createProject };

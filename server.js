@@ -18,7 +18,7 @@ app.use(cors(corsOptions));
 
 const io = new Server(2219, {
     cors: {
-        origin: ['http://localhost', `http://localhost:${process.env.VITE_PORT}`, `http://localhost:${process.env.VITE_SERVER_PORT}`],
+        origin: [process.env.VITE_SERVER, `http://localhost:${process.env.VITE_PORT}`],
     }
 });
 
@@ -49,6 +49,7 @@ app.post('/xml', async (req, res) => {
 
 app.post('/newProject', async (req, res) => {
     try {
+        // throw new Error();
         let doc = {};
         let title = req.body.title.trim();
         let platforms = req.body.platforms;
@@ -57,7 +58,7 @@ app.post('/newProject', async (req, res) => {
         doc.platforms = platforms;
         doc.data = { design: {}, blocks: {} };
         let resp = await db.collection('projects').insertOne(doc);
-        resp.acknowledged ? res.status(201).send(resp.insertedId) : res.status(500).send('An error occured while creating the project');
+        resp.acknowledged ? res.status(201).send(resp.insertedId.toString()) : res.status(500).send('An error occured while creating the project');
     } catch {
         res.status(500).send('An error occured while creating the project');
     }
@@ -73,8 +74,8 @@ app.post('/fetchProject', async (req, res) => {
     }
 });
 
-app.listen(process.env.VITE_SERVER_PORT, () => {
-    console.log('Server started on port ' + process.env.VITE_SERVER_PORT);
+app.listen(process.env.VITE_SERVER.slice(-4), () => {
+    console.log('Server started at ' + process.env.VITE_SERVER);
 });
 
 io.on('connection', socket => {
