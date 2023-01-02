@@ -22,6 +22,9 @@
     },
     "homepage": "https://github.com/randrei12/app-builder-web#readme",
     "dependencies": {
+        "@emotion/react": "^11.10.5",
+        "@emotion/styled": "^11.10.5",
+        "@mui/joy": "^5.0.0-alpha.60",
         "blockly": "^9.0.1",
         "body-parser": "^1.20.1",
         "cors": "^2.8.5",
@@ -31,6 +34,7 @@
         "lodash": "^4.17.21",
         "mongoose": "^6.7.2",
         "react": "^18.2.0",
+        "react-blockly": "^7.0.1",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.6.1",
         "socket.io": "^4.5.4",

@@ -1,13 +1,13 @@
 import { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, matchRoutes } from 'react-router-dom';
-import { Context } from '../hooks/context';
+import { projectContext } from 'hooks/context/project';
 import '../scss/components/topBar.scss';
 
 function TopBar() {
     const location = useLocation();
     const isProjectPath = matchRoutes([{ path:'/projects/:id/*' }], location);
     const [ activeTab, setActiveTab ] = useState<string>('');
-    const { project } = useContext(Context);
+    const { project } = useContext(projectContext);
 
     useEffect(() => {
         setActiveTab(isProjectPath ? isProjectPath[0].params['*'] as string : '');

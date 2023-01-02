@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
-import { Context } from '../hooks/context';
+import { projectContext } from 'hooks/context/project';
 import Swal from 'sweetalert2';
 import Design from '../components/project/design';
 import Blocks from '../components/project/blocks';
 import '../scss/pages/project.scss';
 
 export default function Project() {
-    const { project, setProject } = useContext(Context);
+    const { project, setProject } = useContext(projectContext);
     const { id } = useParams();
     
     //@ts-ignore

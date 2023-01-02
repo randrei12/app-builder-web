@@ -11,19 +11,33 @@ const socket = io('http://localhost:2219');
 interface Backend {
     workspace: Blockly.WorkspaceSvg
     project: Project
-    update: (event: any) => void;
+    xml: string
+    setXml: (xml: string) => string
+    update: (event: any) => void
+    createBlockly: () => void;
+    serialize: { save: () => { [key: string]: any; }; load: (data: string) => void; };
 }
 
 class Backend {
     elements: any[];
-    constructor({ xml, project }: { xml: string, project: Project }) {
-        this.workspace = Blockly.inject('blockly', { toolbox: xml, zoom: { controls: true, wheel: true, startScale: 1, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 }, theme });
+    constructor({ project }: { project: Project }) {
         this.project = project;
         this.elements = [];
 
-        this.update = (event: any) => update(event, socket, Backend.prototype.project, Backend.prototype.elements);
-        this.workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnected blocks
+        this.setXml = (xml: string) => this.xml = xml;
+        this.createBlockly = () => {
+            this.workspace = Blockly.inject('blockly', { toolbox: this.xml, zoom: { controls: true, wheel: true, startScale: 1, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 }, theme });
+            this.workspace.addChangeListener(Blockly.Events.disableOrphans); //disable unconnected blocks
+        },
+        this.serialize = {
+            save: () => Blockly.serialization.workspaces.save(this.workspace),
+            load: data => Blockly.serialization.workspaces.load(this.workspace, JSON.parse(data))
+        }
+        this.update = (event: any) => update(event, socket, this.project, this.elements);
+
     }
+
+
 }
 
 
