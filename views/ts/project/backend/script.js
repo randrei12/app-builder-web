@@ -1,10 +1,7 @@
 import Blockly from 'blockly';
 import { updateCategories, updateElementsDropdown } from "./dynamic";
-import { javascriptGenerator } from 'blockly/javascript';
 const { theme, ...blocks } = require('./blocks');
 Object.assign(Blockly.Blocks, blocks); //adding custom blocks to blockly blocks
-import * as codes from './blocks_code';
-Object.assign(javascriptGenerator, codes); //adding custom blocks' code to javascript generator
 import saveBlocksState from './blocks_state';
 import * as PROJECT from '../projectVars';
 import { generateError } from './utils';
@@ -45,19 +42,3 @@ addEventListener('fetchProject', e => {
 //* for debbuging
 window.workspace = workspace;
 window.Blockly = Blockly;
-
-
-//load blocks from database
-// fetch('/getProjectCode', {
-//     method: 'POST',
-//     body: JSON.stringify({
-//         id: PROJECT.ID
-//     }),
-//     headers: {'Content-Type': 'application/json'},
-// }).then(res => {
-//     if (res.status === 200) res.json().then(data => {
-//         console.log('got', data);
-//         if (data) Blockly.serialization.workspaces.load(data, workspace); //load into workspace blocks' state but only if the object is not empty
-//     }); 
-//     // else location.href = '/';
-// });
