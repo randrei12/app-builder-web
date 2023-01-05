@@ -98,7 +98,6 @@ io.on('connection', socket => {
     socket.on('updateCode', async data => {
         try {
             if (typeof data.id !== 'string') throw new Error();
-            console.log('change');
             let resp = await db.collection('projects').updateOne({ _id: ObjectId(data.id) }, { $set: { 'data.blocks': data.code } });
             if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
         } catch (e) {
