@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TopBar from './components/topBar';
-import Root from './pages/root';
+import Root from './pages/landing';
 import ProjectsList from './pages/projectsList';
 import Project from './pages/project';
-import './scss/components/scrollBar.scss';
+import './components/scrollBar.scss';
 
 function App() {
     return (

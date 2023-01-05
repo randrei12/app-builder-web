@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGO_URL + '/app-builder'); //connect to mongodb
 const db = mongoose.connection;
 const { ObjectId } = mongoose.Types; //getting ObjectId for searching by id
 
-const corsOptions = +process.env.VITE_PRODUCTION ? {} : { origin: 'http://localhost:3000' };
+const corsOptions = +process.env.VITE_PRODUCTION ? {} : { origin: `http://localhost:${process.env.VITE_PORT}` };
 app.use(cors(corsOptions));
 
 const io = new Server(2219, {
@@ -39,12 +39,15 @@ app.post('/projects', (req, res) => {
 });
 
 app.post('/xml', async (req, res) => {
-    fs.readFile('toolbox.xml', (err, xml) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send();
-        } else res.send(xml);
-    })
+    try {
+        fs.readFile(`toolbox.xml`, (err, xml) => {
+            if (err) throw new Error()
+            else res.send(xml);
+        })
+    } catch {
+        console.error(err);
+        res.status(500).send();
+    }
 });
 
 app.post('/newProject', async (req, res) => {
@@ -95,7 +98,7 @@ io.on('connection', socket => {
     socket.on('updateCode', async data => {
         try {
             if (typeof data.id !== 'string') throw new Error();
-            JSON.parse(data.code);
+            console.log('change');
             let resp = await db.collection('projects').updateOne({ _id: ObjectId(data.id) }, { $set: { 'data.blocks': data.code } });
             if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
         } catch (e) {
