@@ -1,15 +1,28 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useEffect } from 'react';
+import Swal from 'sweetalert2';
 
-import './rightPanel.script'
+
 import './rightPanel.scss';
 
 export default function RightPanel() {
-    
+    useEffect(() => {
+        Swal.fire({
+            title: 'Loading...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(null);
+            }
+        });
+        Promise.all([import('./rightPanel.script')]).then(() => {
+            Swal.close();
+        })
+    })
 
     return (
         <div className="rightElements">
             <div className="topInfo">
-                <span>Text1</span>
+                <span></span>
                 <input type="text" style={{ display: "none" }} />
                 <button>D</button>
             </div>

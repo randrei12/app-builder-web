@@ -1,17 +1,18 @@
 import io from 'socket.io-client';
-import { merge } from 'lodash';
 import { useEffect, useContext, useState, useRef } from 'react';
 import { useBlocklyWorkspace } from 'react-blockly';
 import { projectContext } from 'hooks/context/project';
 import { BlocklyContext } from 'hooks/context/blockly';
+import { updateCategories, updateElementsDropdown } from 'ts/blockly/functions/dynamic';
 import toolbox from 'ts/blockly/toolbox.json';
 import theme from 'ts/blockly/blocks';
 
-import Backend from 'ts/blockly/main';
+import 'ts/blockly/main';
 import './blockly.scss';
 
 import Blockly from 'blockly';
 import Project from 'ts/interfaces/project'
+import { screenElements } from 'ts/design/vars';
 
 const socket = io('http://localhost:2219');
 
@@ -48,36 +49,21 @@ export default function Blocks() {
 
     useEffect(() => {
         if (Object.keys(project).length) {
-            Blockly.serialization.workspaces.load(JSON.parse((project as Project).data.blocks), Blockly.getMainWorkspace());
+            // Blockly.serialization.workspaces.load(JSON.parse((project as Project).data.blocks), Blockly.getMainWorkspace());
             console.log('loaded');
         }
     }, [project]);
 
-    // if (Object.keys(project).length) {
-    //     let code = JSON.parse((project as Project).data.blocks);
+    useEffect(() => {
+        console.log(screenElements);
         
-    //     console.log(Blockly.getMainWorkspace());
-        
-        
-    //     Blockly.serialization.workspaces.load(Blockly.getMainWorkspace(), code);
-    // }
+        if (blocklyWorkspace.workspace && screenElements.length) {
+            updateCategories({ json: toolbox, workspace: blocklyWorkspace.workspace, elements: screenElements });
+            updateElementsDropdown({ workspace: blocklyWorkspace.workspace, elements: screenElements });
+            Blockly.serialization.workspaces.load(JSON.parse((project as Project).data.blocks), Blockly.getMainWorkspace());
+        }
+    }, [blocklyWorkspace.workspace, screenElements]);
     
-    // if (Object.keys(project).length) {
-    //     console.log('loaded');
-    // }
-    // useEffect(() => {
-    //     if (Object.keys(project).length && blocklyWorkspace.workspace) {
-    //         let code = JSON.parse((project as Project).data.blocks);
-    //         console.log(code);
-    //         Blockly.serialization.workspaces.load(blocklyWorkspace.workspace, code);
-    //     }
-        
-        
-            
-            
-        
-    // }, [project]);
-
     return (
         <div id="blockly" ref={blocklyRef}></div>
     );

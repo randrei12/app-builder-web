@@ -1,50 +1,59 @@
-import { stylesheet_data } from 'ts/interfaces/elements/styles';
+import { chunk } from "lodash";
+import { currentScreenElement } from "ts/design/vars";
+import { stylesheet } from "ts/interfaces/elements/styles";
+
+const topInfoTitle = document.querySelector('.topInfo > span') as HTMLElement;
+window.x = topInfoTitle;
+
+const topInfoInput = document.querySelector('.topInfo > input') as HTMLInputElement;
+const deleteButton = document.querySelector('.topInfo button') as HTMLElement;
+const rightContent = document.querySelector('.rightElements > .content') as HTMLElement;
 
 let groups: HTMLElement[][];
-let rightContent: HTMLElement;
-function setTabs(rightElem: HTMLElement, tabs: HTMLElement[][]) {
-    rightContent = rightElem;
-    groups = tabs;
-}
 
 // right inter. switch tabs (global/specific)
 const rightStylesGroup: NodeListOf<HTMLElement> = document.querySelectorAll('.nav > button');
 const underline = document.querySelector('.underline') as HTMLElement;
 rightStylesGroup.forEach((button, index) => button.onclick = () => switchTab(index));
 
-//
-function stylesToHTML({ section, elem }: { section: string, elem: string }, styles: any, inputs: { [key: string]: HTMLInputElement }) {
-    const group = document.createElement('div');
-    group.classList.add('group');   
-    const header = document.createElement('span');
-    header.classList.add('header');
-    header.innerText = section.charAt(0).toUpperCase() + section.replace(/([A-Z])/g, ' $1').slice(1);
-    group.append(header);
-    Object.keys(styles).forEach(style => group.append(specificStyleToHTML(style, elem, styles[style as keyof object], inputs)));
-    return group;
-}
-
-function specificStyleToHTML(section: string, elem: string, data: stylesheet_data, inputs: { [key: string]: HTMLInputElement }) {
-    const { kind, type, unit, value } = data;
-    const sect = document.createElement('div');
-    sect.classList.add('section');
-    const span = document.createElement('span');
-    span.innerText = section.charAt(0).toUpperCase() + section.replace(/([A-Z])/g, ' $1').slice(1);
-    const input = document.createElement('input');
-    input.value = value;
-    if (kind === 'innerText') input.value = elem;
-    sect.append(span, input);
-    inputs[section] = input;
-    return sect;
-}
-
-function switchTab(index: number) {
+export function switchTab(index: number) {
     //changes the active tab button
     const otherElemIndex = (index + 1) % 2;
     rightStylesGroup[otherElemIndex].classList.remove('active');
     rightStylesGroup[index].classList.add('active');
     underline.style.setProperty('--active-index', index.toString());
-    if (rightContent) rightContent.replaceChildren(...groups[index]);
+    if (rightContent) rightContent.replaceChildren(...groups[index] || '');
 }
 
-export { specificStyleToHTML, stylesToHTML, setTabs, switchTab }
+function closeChangeName() {
+    currentScreenElement.get().name = topInfoTitle.innerHTML = topInfoInput.value.trim();
+    topInfoInput.style.display = 'none';
+    topInfoTitle.removeAttribute('style');
+    dispatchEvent(new CustomEvent('updateDesignCode'));
+}
+
+topInfoTitle.onclick = () => {
+    topInfoInput.removeAttribute('style');
+    topInfoInput.onkeyup = e => {
+        if (e.key === 'Enter') closeChangeName();
+    }
+    topInfoInput.value = topInfoTitle.innerText;
+    topInfoTitle.style.display = 'none';
+}
+
+onclick = e => {
+    if (topInfoTitle.style.display === 'none' && ![topInfoInput, topInfoTitle].includes(e.composedPath()[0] as HTMLElement))
+        closeChangeName();
+}
+
+addEventListener('elementFocused', e => {
+    let current = currentScreenElement.get();
+    topInfoTitle.innerText = current.name;
+    groups = chunk(current.styleGroups, Object.keys(stylesheet.global).length);
+    switchTab(0);
+    // console.log(current);
+    
+    deleteButton.onclick = () => {
+        current.remove();
+    }
+});

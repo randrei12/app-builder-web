@@ -88,22 +88,22 @@ const stylesheet = {
     defaults: {
         button: {
             backgroundColor: {
+                value: 'orange'
+            },
+            color: {
                 value: 'white'
             },
             borderRadius: {
-                value: '5px'
+                value: '15px'
             },
             border: {
-                value: '1px solid black'
-            },
-            width: {
-                value: '70px'
-            },
-            height: {
-                value: '30px'
+                value: 'none'
             },
             fontSize: {
                 value: '16px'
+            },
+            padding: {
+                value: '5px 15px'
             }
         },
         screen: {

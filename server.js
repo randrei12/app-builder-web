@@ -91,7 +91,7 @@ io.on('connection', socket => {
             let resp = await db.collection('projects').updateOne({ _id: ObjectId(id) }, { $set: { 'data.design': JSON.stringify(target) } });
             if (!resp.acknowledged || resp.matchedCount === 0) throw new Error();
         } catch (e) {
-            console.log('\x1b[31mAn error occured while updating design\n', e);
+            console.error('An error occured while updating design\n', e);
         };
     });
 

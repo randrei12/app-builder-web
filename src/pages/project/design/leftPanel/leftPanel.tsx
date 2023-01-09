@@ -1,23 +1,30 @@
-import React from 'react';
-import { useEffect } from 'react';
-
-import './leftPanel.script';
+import Swal from 'sweetalert2';
+import { useContext, useEffect } from 'react';
 import './leftPanel.scss';
+import { projectContext } from 'hooks/context/project';
+import Project from 'ts/interfaces/project';
 
 export default function LeftPanel() {
+    let { project } = useContext(projectContext);
+
     useEffect(() => {
-        const sides: NodeListOf<HTMLElement> = document.querySelectorAll('.leftElements > div');
-        const containers: NodeListOf<HTMLElement> = document.querySelectorAll('.leftElements .container');
-        const tops: NodeListOf<HTMLElement> = document.querySelectorAll('.leftElements .top');
-        
-        tops.forEach((top, index) => {
-            top.onclick = () => {
-                top.classList.toggle('closed');
-                containers[index].classList.toggle('collapsed');  
-                sides[index].classList.toggle('collapsed');
+        Swal.fire({
+            title: 'Loading...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading(null);
             }
         });
-    }, []);
+
+        Promise.all([import('./scripts/newElements'), import('./scripts/sectionsUI')]).then(modules => {
+            if (!Object.keys(project).length) return;
+            modules[0].default((project as Project).data.design);
+            modules[1].default();
+            Swal.close();
+        });
+        
+    }, [project]);
 
     return (
         <div className="leftElements">

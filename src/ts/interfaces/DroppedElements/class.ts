@@ -16,6 +16,7 @@ export interface IF_DroppedElement {
     id: string;
     type: string;
     name: string;
+    styleGroups: HTMLDivElement[]
     children: {
         add: (elem: IF_DroppedElement) => void,
         remove: (elem: IF_DroppedElement) => void,
@@ -37,5 +38,5 @@ export interface IF_DroppedElement {
     focus: () => void;
     unfocus: () => void;
     getElement: () => HTMLElement;
-    export: () => { name: string; type: string; styles: { [key: string]: stylesheet_data; }; text: string; src: string; id: string; childs: any[]; };
+    export: () => { name: string; type: string; styles: { [key: string]: stylesheet_data; }; text: string; src: string | undefined; id: string; childs: any[]; };
 }
